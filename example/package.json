@@ -1,0 +1,43 @@
+{
+  "name": "faceapi",
+  "displayName": "FaceApi",
+  "version": "1.0.0",
+  "description": "A sample Regula Face Api application for reading and comparing faces.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "ecosystem:cordova"
+  ],
+  "author": "Regula Forensics Inc.",
+  "license": "commercial",
+  "dependencies": {
+    "cordova-android": "^9.0.0",
+    "cordova-ios": "^6.1.1",
+    "cordova-plugin-add-swift-support": "^2.0.2",
+    "@regulaforensics/cordova-plugin-face-api-beta": "^0.0.1",
+    "cordova-plugin-image-picker": "^1.1.3",
+    "cordova-plugin-android-permissions": "1.1.0"
+  },
+  "cordova": {
+    "plugins": {
+      "@regulaforensics/cordova-plugin-face-api-beta": {
+        "CAMERA_USAGE_DESCRIPTION": "To take photo",
+        "READ_EXTERNAL_STORAGE": "To choose photo"
+      },
+      "cordova-plugin-image-picker": {
+        "PHOTO_LIBRARY_USAGE_DESCRIPTION": " "
+      },
+      "cordova-plugin-whitelist": {},
+      "cordova-plugin-android-permissions": {}
+    },
+    "platforms": [
+      "android",
+      "ios"
+    ]
+  },
+  "devDependencies": {
+    "cordova-plugin-whitelist": "^1.3.4"
+  }
+}

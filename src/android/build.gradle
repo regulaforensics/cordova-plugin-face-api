@@ -1,0 +1,25 @@
+repositories {
+		jcenter()
+		maven{
+			url "https://maven.google.com"
+		}
+        maven {
+            url "http://maven.regulaforensics.com/RegulaDocumentReader"
+            allowInsecureProtocol true
+        }
+        maven {
+            url "http://maven.regulaforensics.com/RegulaDocumentReader/Beta"
+            allowInsecureProtocol true
+        }
+        maven {
+            url "http://ftp.regula.local/RegulaDocumentReaderGit"
+            allowInsecureProtocol true
+        }
+	}
+
+dependencies {
+    //noinspection GradleDependency
+    implementation('com.regula.documentreader:facesdk:5.4.655'){
+        transitive = true
+    }
+}

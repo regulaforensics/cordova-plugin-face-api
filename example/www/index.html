@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta http-equiv="Content-Security-Policy"
+          content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data: content:;">
+    <meta name="format-detection" content="telephone=no">
+    <meta name="msapplication-tap-highlight" content="no">
+    <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
+    <link rel="stylesheet" type="text/css" href="css/index.css">
+    <title>Document Reader</title>
+</head>
+
+<body>
+<div id="rfidUI" style="text-align: center; background-color: #F5FCFF; height: 100%; width:100%; display: none;">
+    <div style="position: absolute; top: 50%; left: 50%; width:100%; -ms-transform: translate(-50%, -50%); transform: translate(-50%, -50%); ">
+        <p id="rfidUIHeader">Reading RFID</p>
+        <p id="rfidDescription">Place your phone on top of the NFC tag</p>
+        <progress id="rfidProgress" value="0" max="100"></progress>
+        <br><br><br>
+        <button id="cancelButton">X</button>
+    </div>
+</div>
+<div id="mainUI" style="
+        text-align: center;
+        background-color: #F5FCFF;
+        height: 100%;">
+    <div id="deviceready" style="position: absolute; top: 10px; width: 100%; text-align: center;">
+        <p class="event listening">Connecting to Device</p>
+        <p id="status" class="event received">Ready</p>
+    </div>
+    <div style="padding: 5px">
+        <div style="align-items:center; text-align: center;display: inline-block;"><br><br>
+            <p style="margin-bottom: 5px">Portrait</p>
+            <img style="height: 133px; width: 100px" src="img/portrait.png" resizeMode="contain"
+                 id="portraitImage"/>
+        </div>
+        <div style="align-items: center; text-align: center; display: inline-block;"><br><br>
+            <p style="margin-bottom: 5px">Document</p>
+            <img style="height: 133px;" src="img/id.png" resizeMode="contain" id="documentImage"/>
+        </div>
+    </div>
+
+    <div>
+        <div id="scenariosRadioGroup"
+             style="position: absolute; bottom: 100px; top: 225px; left: 75px; width:225px; padding: 5px; text-align:left; overflow: auto"/>
+    </div>
+
+    <div style="position: absolute; bottom: 10px; width: 100%; text-align: center; align-items: center">
+        <div id="rfidDiv" style="flex-direction: row; padding: 5px">
+            <input id="rfidCheckbox" type="checkbox" name="rfid" disabled><span
+                id="rfidCheckboxText"
+                style="color: lightgrey"> Process rfid reading(unavailable)</span><br>
+        </div>
+        <div style="flex-direction: row; padding: 10px">
+            <button id="showScannerButton" style="margin-right: 20px">scan doc</button>
+            <button id="showImagePicker" style="margin-left: 20px">scan image</button>
+        </div>
+    </div>
+</div>
+<script type="text/javascript" src="cordova.js"></script>
+<script type="text/javascript" src="js/index.js"></script>
+<style type="text/css">
+        button {
+            width: 40%;
+            -moz-box-shadow: inset 0px -3px 7px 0px #29bbff;
+            -webkit-box-shadow: inset 0px -3px 7px 0px #29bbff;
+            box-shadow: inset 0px -3px 7px 0px #29bbff;
+            background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #2dabf9), color-stop(1, #0688fa));
+            background: -moz-linear-gradient(top, #2dabf9 5%, #0688fa 100%);
+            background: -webkit-linear-gradient(top, #2dabf9 5%, #0688fa 100%);
+            background: -o-linear-gradient(top, #2dabf9 5%, #0688fa 100%);
+            background: -ms-linear-gradient(top, #2dabf9 5%, #0688fa 100%);
+            background: linear-gradient(to bottom, #2dabf9 5%, #0688fa 100%);
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#2dabf9', endColorstr='#0688fa', GradientType=0);
+            background-color: #2dabf9;
+            -moz-border-radius: 3px;
+            -webkit-border-radius: 3px;
+            border-radius: 3px;
+            border: 1px solid #0b0e07;
+            display: inline-block;
+            cursor: pointer;
+            color: #ffffff;
+            font-family: Arial;
+            font-size: 15px;
+            padding: 9px 23px;
+            text-decoration: none;
+            text-shadow: 0px 1px 0px #263666;
+        }
+
+        button:hover {
+            background: -webkit-gradient(linear, left top, left bottom, color-stop(0.05, #0688fa), color-stop(1, #2dabf9));
+            background: -moz-linear-gradient(top, #0688fa 5%, #2dabf9 100%);
+            background: -webkit-linear-gradient(top, #0688fa 5%, #2dabf9 100%);
+            background: -o-linear-gradient(top, #0688fa 5%, #2dabf9 100%);
+            background: -ms-linear-gradient(top, #0688fa 5%, #2dabf9 100%);
+            background: linear-gradient(to bottom, #0688fa 5%, #2dabf9 100%);
+            filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#0688fa', endColorstr='#2dabf9', GradientType=0);
+            background-color: #0688fa;
+        }
+
+        button:active {
+            position: relative;
+            top: 1px;
+        }
+
+</style>
+</body>
+
+</html>
