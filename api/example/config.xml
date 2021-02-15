@@ -1,0 +1,33 @@
+<?xml version='1.0' encoding='utf-8'?>
+<widget android-packageName="com.regula.faceapi" ios-CFBundleIdentifier="regula.FaceApi" version="1.0.0" xmlns:android="http://schemas.android.com/apk/res/android" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+    <name>FaceApi</name>
+    <description>
+        A sample Regula Face Api application for reading and comparing faces.
+    </description>
+    <author email="cordova.support@regulaforensics.com" href="https://mobile.regulaforensics.com">
+        Regula Forensics Inc.
+    </author>
+    <content src="index.html" />
+    <plugin name="cordova-plugin-whitelist" spec="1" />
+    <access origin="*" />
+    <allow-intent href="http://*/*" />
+    <allow-intent href="https://*/*" />
+    <allow-intent href="tel:*" />
+    <allow-intent href="sms:*" />
+    <allow-intent href="mailto:*" />
+    <allow-intent href="geo:*" />
+    <platform name="android">
+        <allow-intent href="market:*" />
+        <config-file parent="/*" target="AndroidManifest.xml">
+            <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+        </config-file>
+    </platform>
+    <platform name="ios">
+        <allow-intent href="itms:*" />
+        <allow-intent href="itms-apps:*" />
+        <preference name="CAMERA_USAGE_DESCRIPTION" default=" " />
+        <config-file target="*-Info.plist" parent="NSCameraUsageDescription">
+            <string>To use camera</string>
+        </config-file>
+    </platform>
+</widget>
