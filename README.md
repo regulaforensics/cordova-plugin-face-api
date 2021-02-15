@@ -1,2 +1,2 @@
-# Cordova Plugin Face Api
+# Cordova Face Api
 
