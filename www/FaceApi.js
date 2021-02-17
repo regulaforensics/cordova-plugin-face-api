@@ -306,4 +306,4 @@ Face.MatchFacesResponse = MatchFacesResponse
 Face.MatchFacesRequest = MatchFacesRequest
 Face.Image = Image
 
-module.exports = FaceApi
+module.exports = Face
