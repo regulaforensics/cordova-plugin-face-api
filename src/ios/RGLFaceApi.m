@@ -1,3 +1,25 @@
+@import UIKit;
+#import "RGLFaceApi.h"
+
+@implementation RGLFaceApi
+
+typedef void (^Callback)(NSString* response);
+
+- (void) result:(NSString*)message :(Callback)callback {
+    callback(message);
+}
+
+- (void) exec:(CDVInvokedUrlCommand*)command {
+    NSMutableArray* args = [[NSMutableArray alloc] init];
+    NSString* action = [[command arguments] objectAtIndex:0];
+    for(int i = 1;i<[command arguments].count;i++)
+        [args addObject:[[command arguments] objectAtIndex:i]];
+    Callback successCallback = ^(NSString* response){
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:response] callbackId:command.callbackId];
+    };
+    Callback errorCallback = ^(NSString* response){
+        [self.commandDelegate sendPluginResult:[CDVPluginResult resultWithStatus:CDVCommandStatus_ERROR messageAsString:response] callbackId:command.callbackId];
+    };
 
     if([action isEqualToString:@"getServiceUrl"])
         [self getServiceUrl :successCallback :errorCallback];
