@@ -12,50 +12,29 @@
 </head>
 
 <body>
-<div id="rfidUI" style="text-align: center; background-color: #F5FCFF; height: 100%; width:100%; display: none;">
-    <div style="position: absolute; top: 50%; left: 50%; width:100%; -ms-transform: translate(-50%, -50%); transform: translate(-50%, -50%); ">
-        <p id="rfidUIHeader">Reading RFID</p>
-        <p id="rfidDescription">Place your phone on top of the NFC tag</p>
-        <progress id="rfidProgress" value="0" max="100"></progress>
-        <br><br><br>
-        <button id="cancelButton">X</button>
-    </div>
-</div>
 <div id="mainUI" style="
         text-align: center;
         background-color: #F5FCFF;
         height: 100%;">
-    <div id="deviceready" style="position: absolute; top: 10px; width: 100%; text-align: center;">
-        <p class="event listening">Connecting to Device</p>
-        <p id="status" class="event received">Ready</p>
-    </div>
-    <div style="padding: 5px">
-        <div style="align-items:center; text-align: center;display: inline-block;"><br><br>
-            <p style="margin-bottom: 5px">Portrait</p>
-            <img style="height: 133px; width: 100px" src="img/portrait.png" resizeMode="contain"
-                 id="portraitImage"/>
-        </div>
-        <div style="align-items: center; text-align: center; display: inline-block;"><br><br>
-            <p style="margin-bottom: 5px">Document</p>
-            <img style="height: 133px;" src="img/id.png" resizeMode="contain" id="documentImage"/>
-        </div>
+    <br>
+    <br>
+    <br>
+    <div>
+        <img style="width: 150px" src="img/portrait.png" id="img1"/><br>
+        <img style="width: 150px" src="img/portrait.png" id="img2"/>
     </div>
 
     <div>
-        <div id="scenariosRadioGroup"
-             style="position: absolute; bottom: 100px; top: 225px; left: 75px; width:225px; padding: 5px; text-align:left; overflow: auto"/>
+        <br>
+        <button id="matchFaces" style="margin: 3px; width:75%">Match</button>
+        <br>
+        <button id="liveness" style="margin: 3px; width:75%">Liveness</button>
+        <br>
+        <button id="clearResults" style="margin: 3px; width:75%">Clear</button>
     </div>
-
-    <div style="position: absolute; bottom: 10px; width: 100%; text-align: center; align-items: center">
-        <div id="rfidDiv" style="flex-direction: row; padding: 5px">
-            <input id="rfidCheckbox" type="checkbox" name="rfid" disabled><span
-                id="rfidCheckboxText"
-                style="color: lightgrey"> Process rfid reading(unavailable)</span><br>
-        </div>
-        <div style="flex-direction: row; padding: 10px">
-            <button id="showScannerButton" style="margin-right: 20px">scan doc</button>
-            <button id="showImagePicker" style="margin-left: 20px">scan image</button>
-        </div>
+    <br>
+    <div>
+        Similarity: <span style="margin-right: 15px" id="similarityResult"></span> Liveness: <span id="livenessResult"></span>
     </div>
 </div>
 <script type="text/javascript" src="cordova.js"></script>
@@ -103,6 +82,8 @@
             position: relative;
             top: 1px;
         }
+
+
 
 </style>
 </body>
