@@ -52,7 +52,7 @@
     NSMutableDictionary *result = [NSMutableDictionary new];
     if(input == nil) return result;
 
-    result[@"image"] = [UIImageJPEGRepresentation(input.image, 1.0) base64EncodedStringWithOptions:0];
+    result[@"bitmap"] = [UIImageJPEGRepresentation(input.image, 1.0) base64EncodedStringWithOptions:0];
     result[@"liveness"] = @(input.liveness);
     result[@"error"] = [self generateNSError:input.error];
 
@@ -86,7 +86,7 @@
     result[@"identifier"] = input.identifier;
     result[@"tag"] = input.tag;
     result[@"imageType"] = @(input.imageType);
-    result[@"image"] = [UIImageJPEGRepresentation(input.image, 1.0) base64EncodedStringWithOptions:0];
+    result[@"bitmap"] = [UIImageJPEGRepresentation(input.image, 1.0) base64EncodedStringWithOptions:0];
 
     return result;
 }

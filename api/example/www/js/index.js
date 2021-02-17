@@ -34,6 +34,8 @@ var app = {
         }
 
         function matchFaces(){
+            if(image1 == null || image1.bitmap == null || image1.bitmap == "" || image2 == null || image2.bitmap == null || image2.bitmap == "")
+              return
             request = new MatchFacesRequest()
             request.images = [image1, image2]
             Face.matchFaces(JSON.stringify(request), response => {
@@ -46,8 +48,8 @@ var app = {
         function clearResults(){
             document.getElementById("img1").src = "img/portrait.png"
             document.getElementById("img2").src = "img/portrait.png"
-            image1 = null
-            image2 = null
+            image1 = new Face.Image()
+            image2 = new Face.Image()
             document.getElementById("similarityResult").innerHTML = "unknown"
             document.getElementById("livenessResult").innerHTML = "unknown"
         }
