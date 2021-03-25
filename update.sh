@@ -59,7 +59,7 @@ fi
 PKG_NAME="@regulaforensics/cordova-plugin-face-api$DEST_TYPE"
 PKG_NAME_CLEAN="cordova-plugin-face-api$DEST_TYPE"
 if [ "$Cordova_module_version" == '+' ]; then
-	LatestModuleVersion="$(sudo npm view $PKG_NAME version)"
+	LatestModuleVersion="$(npm view $PKG_NAME version)"
 	Cordova_module_version="${LatestModuleVersion%.*}.$((${LatestModuleVersion##*.}+1))"
 fi
 if [ "$Cordova_module_version" == '.1' ]; then
@@ -122,7 +122,7 @@ cd "$Base_path"
 /usr/local/bin/jq --arg Cordova_module_version "$Cordova_module_version" '.version = $Cordova_module_version' package.json > tmp.$$.json && mv tmp.$$.json package.json
 /usr/local/bin/jq --arg PKG_NAME "$PKG_NAME" '.cordova.id = $PKG_NAME' package.json > tmp.$$.json && mv tmp.$$.json package.json
 
-if sudo /usr/local/bin/npm publish ; then
+if /usr/local/bin/npm publish ; then
     echo ''
     echo 'SUCCESS!'
     echo ''
