@@ -14,8 +14,8 @@ var app = {
         var image1 = new Face.Image()
         var image2 = new Face.Image()
 
-        document.getElementById("similarityResult").innerHTML = "unknown"
-        document.getElementById("livenessResult").innerHTML = "unknown"
+        document.getElementById("similarityResult").innerHTML = "nil"
+        document.getElementById("livenessResult").innerHTML = "nil"
 
         document.getElementById("img1").onclick = function () { pickImage(true) }
         document.getElementById("img2").onclick = function () { pickImage(false) }
@@ -23,19 +23,55 @@ var app = {
         document.getElementById("liveness").addEventListener("click", liveness)
         document.getElementById("clearResults").addEventListener("click", clearResults)
 
-        function liveness(){
-            Face.startLivenessMatching(result => {
-                result = LivenessResponse.fromJson(JSON.parse(result))
-                image1.bitmap = result.bitmap
-                image1.imageType = Enum.eInputFaceType.ift_Live
-                document.getElementById("img1").src = "data:image/png;base64," + result.bitmap
-                document.getElementById("livenessResult").innerHTML = result["liveness"] == 0 ? "passed" : "unknown"
-            }, e => { })
+        function pickImage(first){
+            navigator.notification.confirm("Choose the option", button => {
+                if(button == 1)
+                    Face.presentFaceCaptureActivity(result => {
+                        setImage(first, FaceCaptureResponse.fromJson(JSON.parse(result)).image.bitmap, Enum.eInputFaceType.ift_Live)
+                    }, e => { })
+                else if (window.cordova.platformId == "android")
+                    useGalleryAndroid(first)
+                else if (window.cordova.platformId == "ios")
+                    useGallery(first)
+            }, "", ["Use camera", "Use gallery"])
+        }
+
+        function useGallery(first){
+            window.imagePicker.getPictures(function (results) {
+                readFile(results[0], function (base64) {
+                    setImage(first, base64, Enum.eInputFaceType.ift_DocumentPrinted)
+                })
+            }, function (e) { }, { maximumImagesCount: 1 })
+        }
+
+        function setImage(first, base64, type) {
+            if(base64 == null) return
+            document.getElementById("similarityResult").innerHTML = "nil"
+            if(first) {
+                image1.bitmap = base64
+                image1.imageType = type
+                document.getElementById("img1").src = "data:image/png;base64," + base64
+                document.getElementById("livenessResult").innerHTML = "nil"
+            } else {
+                image2.bitmap = base64
+                image2.imageType = type
+                document.getElementById("img2").src = "data:image/png;base64," + base64
+            }
+        }
+
+        function clearResults(){
+            document.getElementById("img1").src = "img/portrait.png"
+            document.getElementById("img2").src = "img/portrait.png"
+            document.getElementById("similarityResult").innerHTML = "nil"
+            document.getElementById("livenessResult").innerHTML = "nil"
+            image1 = new Face.Image()
+            image2 = new Face.Image()
         }
 
         function matchFaces(){
             if(image1 == null || image1.bitmap == null || image1.bitmap == "" || image2 == null || image2.bitmap == null || image2.bitmap == "")
-              return
+                return
+            document.getElementById("similarityResult").innerHTML = "Processing..."
             request = new MatchFacesRequest()
             request.images = [image1, image2]
             Face.matchFaces(JSON.stringify(request), response => {
@@ -45,29 +81,14 @@ var app = {
             }, e => { this.setState({ similarity: e }) })
         }
 
-        function clearResults(){
-            document.getElementById("img1").src = "img/portrait.png"
-            document.getElementById("img2").src = "img/portrait.png"
-            image1 = new Face.Image()
-            image2 = new Face.Image()
-            document.getElementById("similarityResult").innerHTML = "unknown"
-            document.getElementById("livenessResult").innerHTML = "unknown"
-        }
+        function liveness(){
+            Face.startLivenessMatching(result => {
+                result = LivenessResponse.fromJson(JSON.parse(result))
 
-        function useGallery(first){
-            window.imagePicker.getPictures(function (results) {
-                readFile(results[0], function (base64) {
-                    if (first) {
-                        document.getElementById("img1").src = "data:image/png;base64," + base64
-                        image1.bitmap = base64
-                        image1.imageType = Enum.eInputFaceType.ift_DocumentPrinted
-                    } else {
-                        document.getElementById("img2").src = "data:image/png;base64," + base64
-                        image2.bitmap = base64
-                        image2.imageType = Enum.eInputFaceType.ift_DocumentPrinted
-                    }
-                })
-            }, function (e) { }, { maximumImagesCount: 1 })
+                setImage(true, result.bitmap, Enum.eInputFaceType.ift_Live)
+                if(result.bitmap != null)
+                    document.getElementById("livenessResult").innerHTML = result["liveness"] == 0 ? "passed" : "unknown"
+            }, e => { })
         }
 
         function useGalleryAndroid(first){
@@ -84,26 +105,6 @@ var app = {
                     })
                 }
             })
-        }
-
-        function pickImage(first){
-            if(confirm("Use camera?"))
-                Face.presentFaceCaptureActivity(result => {
-                    result = FaceCaptureResponse.fromJson(JSON.parse(result))
-                    if (first) {
-                        document.getElementById("img1").src = "data:image/png;base64," + result.image.bitmap
-                        image1.bitmap = result.image.bitmap
-                        image1.imageType = Enum.eInputFaceType.ift_Live
-                    } else {
-                        document.getElementById("img2").src = "data:image/png;base64," + result.image.bitmap
-                        image2.bitmap = result.image.bitmap
-                        image2.imageType = Enum.eInputFaceType.ift_Live
-                    }
-                }, e => { })
-            else if (window.cordova.platformId == "android")
-                useGalleryAndroid(first)
-            else if (window.cordova.platformId == "ios")
-                useGallery(first)
         }
 
         function readFile(path, callback, ...items) {
