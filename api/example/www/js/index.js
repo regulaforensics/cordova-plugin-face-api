@@ -24,14 +24,16 @@ var app = {
         document.getElementById("clearResults").addEventListener("click", clearResults)
 
         function pickImage(first){
-            if(confirm("Use camera?"))
-                Face.presentFaceCaptureActivity(result => {
-                    setImage(first, FaceCaptureResponse.fromJson(JSON.parse(result)).image.bitmap, Enum.eInputFaceType.ift_Live)
-                }, e => { })
-            else if (window.cordova.platformId == "android")
-                useGalleryAndroid(first)
-            else if (window.cordova.platformId == "ios")
-                useGallery(first)
+            navigator.notification.confirm("Choose the option", button => {
+                if(button == 1)
+                    Face.presentFaceCaptureActivity(result => {
+                        setImage(first, FaceCaptureResponse.fromJson(JSON.parse(result)).image.bitmap, Enum.eInputFaceType.ift_Live)
+                    }, e => { })
+                else if (window.cordova.platformId == "android")
+                    useGalleryAndroid(first)
+                else if (window.cordova.platformId == "ios")
+                    useGallery(first)
+            }, "", ["Use camera", "Use gallery"])
         }
 
         function useGallery(first){
