@@ -23,20 +23,21 @@ var app = {
         document.getElementById("liveness").addEventListener("click", liveness)
         document.getElementById("clearResults").addEventListener("click", clearResults)
 
-        function pickImage(first){
+        function pickImage(first) {
             navigator.notification.confirm("Choose the option", button => {
-                if(button == 1)
+                if (button == 1)
                     Face.presentFaceCaptureActivity(result => {
                         setImage(first, FaceCaptureResponse.fromJson(JSON.parse(result)).image.bitmap, Enum.eInputFaceType.ift_Live)
                     }, e => { })
-                else if (window.cordova.platformId == "android")
-                    useGalleryAndroid(first)
-                else if (window.cordova.platformId == "ios")
-                    useGallery(first)
+                else if (button == 2)
+                    if (window.cordova.platformId == "android")
+                        useGalleryAndroid(first)
+                    else if (window.cordova.platformId == "ios")
+                        useGallery(first)
             }, "", ["Use camera", "Use gallery"])
         }
 
-        function useGallery(first){
+        function useGallery(first) {
             window.imagePicker.getPictures(function (results) {
                 readFile(results[0], function (base64) {
                     setImage(first, base64, Enum.eInputFaceType.ift_DocumentPrinted)
@@ -45,9 +46,9 @@ var app = {
         }
 
         function setImage(first, base64, type) {
-            if(base64 == null) return
+            if (base64 == null) return
             document.getElementById("similarityResult").innerHTML = "nil"
-            if(first) {
+            if (first) {
                 image1.bitmap = base64
                 image1.imageType = type
                 document.getElementById("img1").src = "data:image/png;base64," + base64
@@ -59,7 +60,7 @@ var app = {
             }
         }
 
-        function clearResults(){
+        function clearResults() {
             document.getElementById("img1").src = "img/portrait.png"
             document.getElementById("img2").src = "img/portrait.png"
             document.getElementById("similarityResult").innerHTML = "nil"
@@ -68,8 +69,8 @@ var app = {
             image2 = new Face.Image()
         }
 
-        function matchFaces(){
-            if(image1 == null || image1.bitmap == null || image1.bitmap == "" || image2 == null || image2.bitmap == null || image2.bitmap == "")
+        function matchFaces() {
+            if (image1 == null || image1.bitmap == null || image1.bitmap == "" || image2 == null || image2.bitmap == null || image2.bitmap == "")
                 return
             document.getElementById("similarityResult").innerHTML = "Processing..."
             request = new MatchFacesRequest()
@@ -77,21 +78,21 @@ var app = {
             Face.matchFaces(JSON.stringify(request), response => {
                 response = MatchFacesResponse.fromJson(JSON.parse(response))
                 matchedFaces = response.matchedFaces
-                document.getElementById("similarityResult").innerHTML = matchedFaces.length > 0 ? ((matchedFaces[0].similarity*100).toFixed(2) + "%") : "error"
+                document.getElementById("similarityResult").innerHTML = matchedFaces.length > 0 ? ((matchedFaces[0].similarity * 100).toFixed(2) + "%") : "error"
             }, e => { this.setState({ similarity: e }) })
         }
 
-        function liveness(){
+        function liveness() {
             Face.startLivenessMatching(result => {
                 result = LivenessResponse.fromJson(JSON.parse(result))
 
                 setImage(true, result.bitmap, Enum.eInputFaceType.ift_Live)
-                if(result.bitmap != null)
+                if (result.bitmap != null)
                     document.getElementById("livenessResult").innerHTML = result["liveness"] == 0 ? "passed" : "unknown"
             }, e => { })
         }
 
-        function useGalleryAndroid(first){
+        function useGalleryAndroid(first) {
             var permissions = cordova.plugins.permissions
             permissions.checkPermission(permissions.READ_EXTERNAL_STORAGE, function (status) {
                 if (status.hasPermission)
