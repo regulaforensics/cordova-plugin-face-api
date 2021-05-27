@@ -83,7 +83,7 @@ var app = {
         }
 
         function liveness() {
-            Face.startLivenessMatching(result => {
+            Face.startLiveness(result => {
                 result = LivenessResponse.fromJson(JSON.parse(result))
 
                 setImage(true, result.bitmap, Enum.eInputFaceType.ift_Live)

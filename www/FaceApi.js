@@ -49,17 +49,6 @@ class MatchFacesError {
     }
 }
 
-class LivenessParams {
-    static fromJson(jsonObject) {
-        if (jsonObject == null) return null
-        const result = new LivenessParams()
-
-        result.attemptsCount = jsonObject["attemptsCount"]
-
-        return result
-    }
-}
-
 class AgeRange {
     static fromJson(jsonObject) {
         if (jsonObject == null) return null
@@ -288,14 +277,13 @@ const Enum = {
 const Face = {}
 
 Face.getServiceUrl = (successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["getServiceUrl"])
-Face.startLivenessMatching = (successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["startLivenessMatching"])
+Face.startLiveness = (successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["startLiveness"])
 Face.getFaceSdkVersion = (successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["getFaceSdkVersion"])
-Face.livenessParams = (successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["livenessParams"])
 Face.presentFaceCaptureActivity = (successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["presentFaceCaptureActivity"])
 Face.stopFaceCaptureActivity = (successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["stopFaceCaptureActivity"])
 Face.stopLivenessProcessing = (successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["stopLivenessProcessing"])
 Face.presentFaceCaptureActivityByCameraId = (cameraId, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["presentFaceCaptureActivityByCameraId", cameraId])
-Face.startLivenessMatchingByCameraId = (cameraId, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["startLivenessMatchingByCameraId", cameraId])
+Face.startLivenessByCameraId = (cameraId, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["startLivenessByCameraId", cameraId])
 Face.setServiceUrl = (url, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["setServiceUrl", url])
 Face.matchFaces = (request, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["matchFaces", request])
 
