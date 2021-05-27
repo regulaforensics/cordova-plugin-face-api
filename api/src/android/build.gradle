@@ -15,7 +15,7 @@ repositories {
 
 dependencies {
     //noinspection GradleDependency
-    implementation('com.regula.documentreader:facesdk:version_place_holder'){
+    implementation('com.regula.face:api:version_place_holder'){
         transitive = true
     }
 }
