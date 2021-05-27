@@ -15,7 +15,7 @@ repositories {
 
 dependencies {
     //noinspection GradleDependency
-    implementation('com.regula.documentreader:facesdk:5.4.926'){
+    implementation('com.regula.face:api:5.4.926'){
         transitive = true
     }
 }
