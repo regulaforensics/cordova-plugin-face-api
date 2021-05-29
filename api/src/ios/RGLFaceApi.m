@@ -33,8 +33,8 @@ typedef void (^Callback)(NSString* response);
         [self stopFaceCaptureActivity :successCallback :errorCallback];
     else if([action isEqualToString:@"stopLivenessProcessing"])
         [self stopLivenessProcessing :successCallback :errorCallback];
-    // else if([action isEqualToString:@"presentFaceCaptureActivityByCameraId"])
-    //     [self presentFaceCaptureActivityByCameraId :[args objectAtIndex:0] :successCallback :errorCallback];
+    else if([action isEqualToString:@"presentFaceCaptureActivityByCameraId"])
+        [self presentFaceCaptureActivityByCameraId :[args objectAtIndex:0] :successCallback :errorCallback];
     else if([action isEqualToString:@"startLivenessByCameraId"])
         [self startLivenessByCameraId :[args objectAtIndex:0] :successCallback :errorCallback];
     else if([action isEqualToString:@"setServiceUrl"])
@@ -79,7 +79,7 @@ typedef void (^Callback)(NSString* response);
     [self result:@"this is an android-only method" :errorCallback];
 }
 
-- (void) startLivenessMatchingByCameraId:(NSNumber*)cameraId : (Callback)successCallback :(Callback)errorCallback{
+- (void) startLivenessByCameraId:(NSNumber*)cameraId : (Callback)successCallback :(Callback)errorCallback{
     [self result:@"this is an android-only method" :errorCallback];
 }
 
