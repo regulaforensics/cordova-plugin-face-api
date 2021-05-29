@@ -23,12 +23,10 @@ typedef void (^Callback)(NSString* response);
 
     if([action isEqualToString:@"getServiceUrl"])
         [self getServiceUrl :successCallback :errorCallback];
-    else if([action isEqualToString:@"startLivenessMatching"])
-        [self startLivenessMatching :successCallback :errorCallback];
+    else if([action isEqualToString:@"startLiveness"])
+        [self startLiveness :successCallback :errorCallback];
     else if([action isEqualToString:@"getFaceSdkVersion"])
         [self getFaceSdkVersion :successCallback :errorCallback];
-    else if([action isEqualToString:@"livenessParams"])
-        [self livenessParams :successCallback :errorCallback];
     else if([action isEqualToString:@"presentFaceCaptureActivity"])
         [self presentFaceCaptureActivity :successCallback :errorCallback];
     else if([action isEqualToString:@"stopFaceCaptureActivity"])
@@ -37,8 +35,8 @@ typedef void (^Callback)(NSString* response);
         [self stopLivenessProcessing :successCallback :errorCallback];
     else if([action isEqualToString:@"presentFaceCaptureActivityByCameraId"])
         [self presentFaceCaptureActivityByCameraId :[args objectAtIndex:0] :successCallback :errorCallback];
-    else if([action isEqualToString:@"startLivenessMatchingByCameraId"])
-        [self startLivenessMatchingByCameraId :[args objectAtIndex:0] :successCallback :errorCallback];
+    else if([action isEqualToString:@"startLivenessByCameraId"])
+        [self startLivenessByCameraId :[args objectAtIndex:0] :successCallback :errorCallback];
     else if([action isEqualToString:@"setServiceUrl"])
         [self setServiceUrl :[args objectAtIndex:0] :successCallback :errorCallback];
     else if([action isEqualToString:@"matchFaces"])
@@ -51,7 +49,7 @@ typedef void (^Callback)(NSString* response);
     [self result:[RGLFace.service serviceURL] :successCallback];
 }
 
-- (void) startLivenessMatching:(Callback)successCallback :(Callback)errorCallback{
+- (void) startLiveness:(Callback)successCallback :(Callback)errorCallback{
     dispatch_async(dispatch_get_main_queue(), ^{
         [RGLFace.service startLivenessFrom:[[[UIApplication sharedApplication] keyWindow] rootViewController] animated:true onLiveness:[self getLivenessCompletion:successCallback :errorCallback] completion:nil];
     });
@@ -59,10 +57,6 @@ typedef void (^Callback)(NSString* response);
 
 - (void) getFaceSdkVersion:(Callback)successCallback :(Callback)errorCallback{
     [self result:[RGLFace.service version] :successCallback];
-}
-
-- (void) livenessParams:(Callback)successCallback :(Callback)errorCallback{
-    [self result:[JSONConstructor dictToString:[JSONConstructor generateRGLLivenessParams:RGLFace.service.livenessParams]] :errorCallback];
 }
 
 - (void) presentFaceCaptureActivity:(Callback)successCallback :(Callback)errorCallback{
