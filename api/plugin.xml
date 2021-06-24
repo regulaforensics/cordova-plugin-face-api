@@ -18,8 +18,8 @@
     </config-file>
     <header-file src="src/ios/RGLFaceApi.h" />
     <source-file src="src/ios/RGLFaceApi.m" />
-    <header-file src="src/ios/JSONConstructor.h" />
-    <source-file src="src/ios/JSONConstructor.m" />
+    <header-file src="src/ios/RFSJSONConstructor.h" />
+    <source-file src="src/ios/RFSJSONConstructor.m" />
     <podspec>
       <config/>
       <pods>
