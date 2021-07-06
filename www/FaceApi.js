@@ -288,11 +288,11 @@ FaceSDK.startLivenessByCameraId = (cameraId, successCallback, errorCallback) => 
 FaceSDK.setServiceUrl = (url, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["setServiceUrl", url])
 FaceSDK.matchFaces = (request, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["matchFaces", request])
 
-Face.Enum = Enum
-Face.FaceCaptureResponse = FaceCaptureResponse
-Face.LivenessResponse = LivenessResponse
-Face.MatchFacesResponse = MatchFacesResponse
-Face.MatchFacesRequest = MatchFacesRequest
-Face.Image = Image
+FaceSDK.Enum = Enum
+FaceSDK.FaceCaptureResponse = FaceCaptureResponse
+FaceSDK.LivenessResponse = LivenessResponse
+FaceSDK.MatchFacesResponse = MatchFacesResponse
+FaceSDK.MatchFacesRequest = MatchFacesRequest
+FaceSDK.Image = Image
 
 module.exports = FaceSDK
