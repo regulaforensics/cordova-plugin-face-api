@@ -7,7 +7,7 @@
   <keywords>cordova,face,reader,regula</keywords>
 
   <js-module name="FaceApi" src="www/FaceApi.js">
-    <clobbers target="Face" />
+    <clobbers target="FaceSDK" />
   </js-module>
 
   <platform name="ios">
