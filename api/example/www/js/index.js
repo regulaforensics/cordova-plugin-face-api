@@ -5,14 +5,14 @@ var app = {
 
     onDeviceReady: function () {
         this.receivedEvent('deviceready')
-        var Enum = Face.Enum
-        var FaceCaptureResponse = Face.FaceCaptureResponse
-        var LivenessResponse = Face.LivenessResponse
-        var MatchFacesResponse = Face.MatchFacesResponse
-        var MatchFacesRequest = Face.MatchFacesRequest
+        var Enum = FaceSDK.Enum
+        var FaceCaptureResponse = FaceSDK.FaceCaptureResponse
+        var LivenessResponse = FaceSDK.LivenessResponse
+        var MatchFacesResponse = FaceSDK.MatchFacesResponse
+        var MatchFacesRequest = FaceSDK.MatchFacesRequest
 
-        var image1 = new Face.Image()
-        var image2 = new Face.Image()
+        var image1 = new FaceSDK.Image()
+        var image2 = new FaceSDK.Image()
 
         document.getElementById("similarityResult").innerHTML = "nil"
         document.getElementById("livenessResult").innerHTML = "nil"
@@ -26,7 +26,7 @@ var app = {
         function pickImage(first) {
             navigator.notification.confirm("Choose the option", button => {
                 if (button == 1)
-                    Face.presentFaceCaptureActivity(result => {
+                FaceSDK.presentFaceCaptureActivity(result => {
                         setImage(first, FaceCaptureResponse.fromJson(JSON.parse(result)).image.bitmap, Enum.eInputFaceType.ift_Live)
                     }, e => { })
                 else if (button == 2)
@@ -65,8 +65,8 @@ var app = {
             document.getElementById("img2").src = "img/portrait.png"
             document.getElementById("similarityResult").innerHTML = "nil"
             document.getElementById("livenessResult").innerHTML = "nil"
-            image1 = new Face.Image()
-            image2 = new Face.Image()
+            image1 = new FaceSDK.Image()
+            image2 = new FaceSDK.Image()
         }
 
         function matchFaces() {
@@ -75,7 +75,7 @@ var app = {
             document.getElementById("similarityResult").innerHTML = "Processing..."
             request = new MatchFacesRequest()
             request.images = [image1, image2]
-            Face.matchFaces(JSON.stringify(request), response => {
+            FaceSDK.matchFaces(JSON.stringify(request), response => {
                 response = MatchFacesResponse.fromJson(JSON.parse(response))
                 matchedFaces = response.matchedFaces
                 document.getElementById("similarityResult").innerHTML = matchedFaces.length > 0 ? ((matchedFaces[0].similarity * 100).toFixed(2) + "%") : "error"
@@ -83,7 +83,7 @@ var app = {
         }
 
         function liveness() {
-            Face.startLiveness(result => {
+            FaceSDK.startLiveness(result => {
                 result = LivenessResponse.fromJson(JSON.parse(result))
 
                 setImage(true, result.bitmap, Enum.eInputFaceType.ift_Live)
