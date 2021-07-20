@@ -27,7 +27,7 @@ var app = {
             navigator.notification.confirm("Choose the option", button => {
                 if (button == 1)
                 FaceSDK.presentFaceCaptureActivity(result => {
-                        setImage(first, FaceCaptureResponse.fromJson(JSON.parse(result)).image.bitmap, Enum.eInputFaceType.ift_Live)
+                        setImage(first, FaceCaptureResponse.fromJson(JSON.parse(result)).image.bitmap, Enum.ImageType.IMAGE_TYPE_LIVE)
                     }, e => { })
                 else if (button == 2)
                     if (window.cordova.platformId == "android")
@@ -40,7 +40,7 @@ var app = {
         function useGallery(first) {
             window.imagePicker.getPictures(function (results) {
                 readFile(results[0], function (base64) {
-                    setImage(first, base64, Enum.eInputFaceType.ift_DocumentPrinted)
+                    setImage(first, base64, Enum.ImageType.IMAGE_TYPE_PRINTED)
                 })
             }, function (e) { }, { maximumImagesCount: 1 })
         }
@@ -86,7 +86,7 @@ var app = {
             FaceSDK.startLiveness(result => {
                 result = LivenessResponse.fromJson(JSON.parse(result))
 
-                setImage(true, result.bitmap, Enum.eInputFaceType.ift_Live)
+                setImage(true, result.bitmap, Enum.ImageType.IMAGE_TYPE_LIVE)
                 if (result.bitmap != null)
                     document.getElementById("livenessResult").innerHTML = result["liveness"] == 0 ? "passed" : "unknown"
             }, e => { })
