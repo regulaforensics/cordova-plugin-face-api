@@ -12,7 +12,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import static com.regula.facesdk.Face.Instance;
+import static com.regula.facesdk.FaceSDK.Instance;
 
 @SuppressWarnings({"ConstantConditions", "RedundantSuppression"})
 public class FaceApi extends CordovaPlugin {
