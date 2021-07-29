@@ -1,0 +1,21 @@
+repositories {
+		jcenter()
+		maven{
+			url "https://maven.google.com"
+		}
+        maven {
+            url "http://maven.regulaforensics.com/RegulaDocumentReader"
+            allowInsecureProtocol true
+        }
+        maven {
+            url "http://maven.regulaforensics.com/RegulaDocumentReader/Beta"
+            allowInsecureProtocol true
+        }
+	}
+
+dependencies {
+    //noinspection GradleDependency
+    implementation('com.regula.face:api:version_place_holder'){
+        transitive = true
+    }
+}
