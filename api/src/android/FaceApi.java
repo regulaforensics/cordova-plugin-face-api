@@ -92,6 +92,9 @@ public class FaceApi extends CordovaPlugin {
                 case "matchFaces":
                     matchFaces(callback, args(0));
                     break;
+                case "setLanguage":
+                    setLanguage(callback, args(0));
+                    break;
             }
         } catch (Exception ignored) {
         }
@@ -139,5 +142,9 @@ public class FaceApi extends CordovaPlugin {
 
     private void matchFaces(Callback callback, String request) throws JSONException {
         Instance().matchFaces(JSONConstructor.MatchFacesRequestFromJSON(new JSONObject(request)), (response) -> callback.success(JSONConstructor.generateMatchFacesResponse(response).toString()));
+    }
+
+    private void setLanguage(Callback callback, @SuppressWarnings("unused") String language) {
+        callback.error("setLanguage() is an ios-only method");
     }
 }
