@@ -1,14 +1,14 @@
 repositories {
-		jcenter()
-		maven{
-			url "https://maven.google.com"
-		}
-        maven {
-            url "https://maven.regulaforensics.com/RegulaDocumentReader"
-        }
-        maven {
-            url "https://maven.regulaforensics.com/RegulaDocumentReader/Beta"
-        }
+    jcenter()
+    maven{
+        url "https://maven.google.com"
+    }
+    maven {
+        url "https://maven.regulaforensics.com/RegulaDocumentReader"
+    }
+    maven {
+        url "https://maven.regulaforensics.com/RegulaDocumentReader/Beta"
+    }
 }
 
 dependencies {
