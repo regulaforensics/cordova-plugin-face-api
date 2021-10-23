@@ -206,6 +206,11 @@ const MatchFacesErrorCodes = {
     PROCESSING_FAILED: 11,
 }
 
+const RFSCameraPosition = {
+    RFSCameraPositionBack: 0,
+    RFSCameraPositionFront: 1,
+}
+
 const Enum = {
    ComparedFacesPairErrorCodes,
    FaceCaptureResultCodes,
@@ -213,6 +218,7 @@ const Enum = {
    LivenessErrorCode,
    LivenessStatus,
    MatchFacesErrorCodes,
+   RFSCameraPosition,
 }
 
 const FaceSDK = {}
@@ -223,10 +229,12 @@ FaceSDK.getFaceSdkVersion = (successCallback, errorCallback) => cordova.exec(suc
 FaceSDK.presentFaceCaptureActivity = (successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["presentFaceCaptureActivity"])
 FaceSDK.stopFaceCaptureActivity = (successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["stopFaceCaptureActivity"])
 FaceSDK.stopLivenessProcessing = (successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["stopLivenessProcessing"])
-FaceSDK.presentFaceCaptureActivityByCameraId = (cameraId, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["presentFaceCaptureActivityByCameraId", cameraId])
-FaceSDK.startLivenessByCameraId = (cameraId, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["startLivenessByCameraId", cameraId])
+FaceSDK.presentFaceCaptureActivityWithConfig = (config, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["presentFaceCaptureActivityWithConfig", config])
+FaceSDK.startLivenessWithConfig = (config, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["startLivenessWithConfig", config])
 FaceSDK.setServiceUrl = (url, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["setServiceUrl", url])
 FaceSDK.matchFaces = (request, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["matchFaces", request])
+FaceSDK.setLanguage = (language, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["setLanguage", language])
+FaceSDK.matchFacesWithConfig = (request, config, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["matchFacesWithConfig", request, config])
 
 FaceSDK.Enum = Enum
 FaceSDK.FaceCaptureResponse = FaceCaptureResponse
