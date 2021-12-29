@@ -2,6 +2,8 @@ package cordova.plugin.faceapi;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 
 import com.regula.facesdk.configuration.FaceCaptureConfiguration;
 import com.regula.facesdk.configuration.LivenessConfiguration;
@@ -14,6 +16,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import static com.regula.facesdk.FaceSDK.Instance;
+
+import java.util.Locale;
 
 @SuppressWarnings({"ConstantConditions", "RedundantSuppression"})
 public class FaceApi extends CordovaPlugin {
@@ -96,6 +100,9 @@ public class FaceApi extends CordovaPlugin {
                 case "setLanguage":
                     setLanguage(callback, args(0));
                     break;
+                case "setConfig":
+                    setConfig(callback, args(0));
+                    break;
                 case "matchFacesWithConfig":
                     matchFacesWithConfig(callback, args(0), args(1));
                     break;
@@ -160,6 +167,10 @@ public class FaceApi extends CordovaPlugin {
         callback.success();
     }
 
+    private void setConfig(Callback callback, JSONObject config) {
+        callback.error("setConfig() is an ios-only method");
+    }
+
     private void matchFaces(Callback callback, String request) throws JSONException {
         Instance().matchFaces(JSONConstructor.MatchFacesRequestFromJSON(new JSONObject(request)), (response) -> callback.success(JSONConstructor.generateMatchFacesResponse(response).toString()));
     }
@@ -171,6 +182,12 @@ public class FaceApi extends CordovaPlugin {
     }
 
     private void setLanguage(Callback callback, @SuppressWarnings("unused") String language) {
-        callback.error("setLanguage() is an ios-only method");
+        Locale locale = new Locale(language);
+        Locale.setDefault(locale);
+        Resources resources = getContext().getResources();
+        Configuration config = resources.getConfiguration();
+        config.setLocale(locale);
+        resources.updateConfiguration(config, resources.getDisplayMetrics());
+        callback.success();
     }
 }
