@@ -315,6 +315,6 @@ FaceSDK.FaceCaptureResponse = FaceCaptureResponse
 FaceSDK.LivenessResponse = LivenessResponse
 FaceSDK.MatchFacesResponse = MatchFacesResponse
 FaceSDK.MatchFacesRequest = MatchFacesRequest
-FaceSDK.Image = Image
+FaceSDK.MatchFacesImage = MatchFacesImage
 
 module.exports = FaceSDK
