@@ -10,9 +10,10 @@ var app = {
         var LivenessResponse = FaceSDK.LivenessResponse
         var MatchFacesResponse = FaceSDK.MatchFacesResponse
         var MatchFacesRequest = FaceSDK.MatchFacesRequest
+        var MatchFacesImage = FaceSDK.MatchFacesImage
 
-        var image1 = new FaceSDK.Image()
-        var image2 = new FaceSDK.Image()
+        var image1 = new MatchFacesImage()
+        var image2 = new MatchFacesImage()
 
         document.getElementById("similarityResult").innerHTML = "nil"
         document.getElementById("livenessResult").innerHTML = "nil"
@@ -65,8 +66,8 @@ var app = {
             document.getElementById("img2").src = "img/portrait.png"
             document.getElementById("similarityResult").innerHTML = "nil"
             document.getElementById("livenessResult").innerHTML = "nil"
-            image1 = new FaceSDK.Image()
-            image2 = new FaceSDK.Image()
+            image1 = new MatchFacesImage()
+            image2 = new MatchFacesImage()
         }
 
         function matchFaces() {
@@ -74,7 +75,7 @@ var app = {
                 return
             document.getElementById("similarityResult").innerHTML = "Processing..."
             request = new MatchFacesRequest()
-            request.images = [image1, image2]
+            request.matchFacesImages = [image1, image2]
             FaceSDK.matchFaces(JSON.stringify(request), response => {
                 response = MatchFacesResponse.fromJson(JSON.parse(response))
                 matchedFaces = response.matchedFaces

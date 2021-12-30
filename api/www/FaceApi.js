@@ -37,45 +37,6 @@ class MatchFacesException {
     }
 }
 
-class ComparedFacesPairException {
-    static fromJson(jsonObject) {
-        if (jsonObject == null) return null
-        const result = new ComparedFacesPairException()
-
-        result.errorCode = jsonObject["errorCode"]
-        result.message = jsonObject["message"]
-
-        return result
-    }
-}
-
-class ComparedFace {
-    static fromJson(jsonObject) {
-        if (jsonObject == null) return null
-        const result = new ComparedFace()
-
-        result.tag = jsonObject["tag"]
-        result.imageType = jsonObject["imageType"]
-        result.position = jsonObject["position"]
-
-        return result
-    }
-}
-
-class ComparedFacesPair {
-    static fromJson(jsonObject) {
-        if (jsonObject == null) return null
-        const result = new ComparedFacesPair()
-
-        result.first = ComparedFace.fromJson(jsonObject["first"])
-        result.second = ComparedFace.fromJson(jsonObject["second"])
-        result.similarity = jsonObject["similarity"]
-        result.exception = ComparedFacesPairException.fromJson(jsonObject["exception"])
-
-        return result
-    }
-}
-
 class FaceCaptureResponse {
     static fromJson(jsonObject) {
         if (jsonObject == null) return null
@@ -95,6 +56,7 @@ class LivenessResponse {
 
         result.bitmap = jsonObject["bitmap"]
         result.liveness = jsonObject["liveness"]
+        result.guid = jsonObject["guid"]
         result.exception = LivenessErrorException.fromJson(jsonObject["exception"])
 
         return result
@@ -110,11 +72,19 @@ class MatchFacesResponse {
         result.matchedFaces = []
         if (jsonObject["matchedFaces"] != null)
             for (const i in jsonObject["matchedFaces"])
-                result.matchedFaces.push(ComparedFacesPair.fromJson(jsonObject["matchedFaces"][i]))
+                result.matchedFaces.push(MatchFacesComparedFacesPair.fromJson(jsonObject["matchedFaces"][i]))
         result.unmatchedFaces = []
         if (jsonObject["unmatchedFaces"] != null)
             for (const i in jsonObject["unmatchedFaces"])
-                result.unmatchedFaces.push(ComparedFacesPair.fromJson(jsonObject["unmatchedFaces"][i]))
+                result.unmatchedFaces.push(MatchFacesComparedFacesPair.fromJson(jsonObject["unmatchedFaces"][i]))
+        result.facesResponse = []
+        if (jsonObject["facesResponse"] != null)
+            for (const i in jsonObject["facesResponse"])
+                result.facesResponse.push(MatchFacesDetection.fromJson(jsonObject["facesResponse"][i]))
+        result.results = []
+        if (jsonObject["results"] != null)
+            for (const i in jsonObject["results"])
+                result.results.push(MatchFacesComparedFacesPair.fromJson(jsonObject["results"][i]))
 
         return result
     }
@@ -138,12 +108,115 @@ class MatchFacesRequest {
         if (jsonObject == null) return null
         const result = new MatchFacesRequest()
 
-        result.similarityThreshold = jsonObject["similarityThreshold"]
-        result.images = []
-        if (jsonObject["images"] != null)
-            for (const i in jsonObject["images"])
-                result.images.push(Image.fromJson(jsonObject["images"][i]))
+        result.matchFacesImages = []
+        if (jsonObject["matchFacesImages"] != null)
+            for (const i in jsonObject["matchFacesImages"])
+                result.matchFacesImages.push(MatchFacesImage.fromJson(jsonObject["matchFacesImages"][i]))
         result.customMetadata = jsonObject["customMetadata"]
+        result.thumbnails = jsonObject["thumbnails"]
+
+        return result
+    }
+}
+
+class MatchFacesImage {
+    static fromJson(jsonObject) {
+        if (jsonObject == null) return null
+        const result = new MatchFacesImage()
+
+        result.imageType = jsonObject["imageType"]
+        result.detectAll = jsonObject["detectAll"]
+        result.bitmap = jsonObject["bitmap"]
+
+        return result
+    }
+}
+
+class MatchFacesComparedFacesPair {
+    static fromJson(jsonObject) {
+        if (jsonObject == null) return null
+        const result = new MatchFacesComparedFacesPair()
+
+        result.first = MatchFacesComparedFace.fromJson(jsonObject["first"])
+        result.second = MatchFacesComparedFace.fromJson(jsonObject["second"])
+        result.similarity = jsonObject["similarity"]
+        result.score = jsonObject["score"]
+        result.exception = MatchFacesException.fromJson(jsonObject["exception"])
+
+        return result
+    }
+}
+
+class MatchFacesComparedFace {
+    static fromJson(jsonObject) {
+        if (jsonObject == null) return null
+        const result = new MatchFacesComparedFace()
+
+        result.detectionFace = MatchFacesDetectionFace.fromJson(jsonObject["detectionFace"])
+        result.matchesFaceImage = MatchFacesImage.fromJson(jsonObject["matchesFaceImage"])
+        result.faceIndex = jsonObject["faceIndex"]
+        result.imageIndex = jsonObject["imageIndex"]
+
+        return result
+    }
+}
+
+class MatchFacesDetectionFace {
+    static fromJson(jsonObject) {
+        if (jsonObject == null) return null
+        const result = new MatchFacesDetectionFace()
+
+        result.faceIndex = jsonObject["faceIndex"]
+        result.landmarks = []
+        if (jsonObject["landmarks"] != null)
+            for (const i in jsonObject["landmarks"])
+                result.landmarks.push(Point.fromJson(jsonObject["landmarks"][i]))
+        result.faceRect = Rect.fromJson(jsonObject["faceRect"])
+        result.rotationAngle = jsonObject["rotationAngle"]
+        result.thumbnail = jsonObject["thumbnail"]
+
+        return result
+    }
+}
+
+class MatchFacesDetection {
+    static fromJson(jsonObject) {
+        if (jsonObject == null) return null
+        const result = new MatchFacesDetection()
+
+        result.image = MatchFacesImage.fromJson(jsonObject["image"])
+        result.imageIndex = jsonObject["imageIndex"]
+        result.faces = []
+        if (jsonObject["faces"] != null)
+            for (const i in jsonObject["faces"])
+                result.faces.push(MatchFacesDetectionFace.fromJson(jsonObject["faces"][i]))
+        result.exception = MatchFacesException.fromJson(jsonObject["exception"])
+
+        return result
+    }
+}
+
+class Point {
+    static fromJson(jsonObject) {
+        if (jsonObject == null) return null
+        const result = new Point()
+
+        result.x = jsonObject["x"]
+        result.y = jsonObject["y"]
+
+        return result
+    }
+}
+
+class Rect {
+    static fromJson(jsonObject) {
+        if (jsonObject == null) return null
+        const result = new Rect()
+
+        result.bottom = jsonObject["bottom"]
+        result.top = jsonObject["top"]
+        result.left = jsonObject["left"]
+        result.right = jsonObject["right"]
 
         return result
     }
