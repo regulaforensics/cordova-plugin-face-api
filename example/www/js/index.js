@@ -78,8 +78,8 @@ var app = {
             request.matchFacesImages = [image1, image2]
             FaceSDK.matchFaces(JSON.stringify(request), response => {
                 response = MatchFacesResponse.fromJson(JSON.parse(response))
-                matchedFaces = response.matchedFaces
-                document.getElementById("similarityResult").innerHTML = matchedFaces.length > 0 ? ((matchedFaces[0].similarity * 100).toFixed(2) + "%") : "error"
+                results = response.results
+                document.getElementById("similarityResult").innerHTML = results.length > 0 ? ((results[0].similarity * 100).toFixed(2) + "%") : "error"
             }, e => { this.setState({ similarity: e }) })
         }
 
