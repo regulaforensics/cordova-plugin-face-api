@@ -69,14 +69,6 @@ class MatchFacesResponse {
         const result = new MatchFacesResponse()
 
         result.exception = MatchFacesException.fromJson(jsonObject["exception"])
-        result.matchedFaces = []
-        if (jsonObject["matchedFaces"] != null)
-            for (const i in jsonObject["matchedFaces"])
-                result.matchedFaces.push(MatchFacesComparedFacesPair.fromJson(jsonObject["matchedFaces"][i]))
-        result.unmatchedFaces = []
-        if (jsonObject["unmatchedFaces"] != null)
-            for (const i in jsonObject["unmatchedFaces"])
-                result.unmatchedFaces.push(MatchFacesComparedFacesPair.fromJson(jsonObject["unmatchedFaces"][i]))
         result.facesResponse = []
         if (jsonObject["facesResponse"] != null)
             for (const i in jsonObject["facesResponse"])
@@ -96,7 +88,6 @@ class Image {
         const result = new Image()
 
         result.imageType = jsonObject["imageType"]
-        result.tag = jsonObject["tag"]
         result.bitmap = jsonObject["bitmap"]
 
         return result
@@ -152,8 +143,8 @@ class MatchFacesComparedFace {
         if (jsonObject == null) return null
         const result = new MatchFacesComparedFace()
 
-        result.detectionFace = MatchFacesDetectionFace.fromJson(jsonObject["detectionFace"])
-        result.matchesFaceImage = MatchFacesImage.fromJson(jsonObject["matchesFaceImage"])
+        result.face = MatchFacesDetectionFace.fromJson(jsonObject["face"])
+        result.image = MatchFacesImage.fromJson(jsonObject["image"])
         result.faceIndex = jsonObject["faceIndex"]
         result.imageIndex = jsonObject["imageIndex"]
 
