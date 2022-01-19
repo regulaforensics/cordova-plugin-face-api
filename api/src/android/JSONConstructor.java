@@ -223,13 +223,13 @@ class JSONConstructor {
 
     static MatchFacesRequest MatchFacesRequestFromJSON(JSONObject input) {
         try {
-            List<MatchFacesImage> matchFacesImages = new ArrayList<>();
-            if (input.has("matchFacesImages")) {
-                JSONArray jsonArray_images = input.getJSONArray("matchFacesImages");
+            List<MatchFacesImage> images = new ArrayList<>();
+            if (input.has("images")) {
+                JSONArray jsonArray_images = input.getJSONArray("images");
                 for (int i = 0; i < jsonArray_images.length(); i++)
-                    matchFacesImages.add(MatchFacesImageFromJSON(jsonArray_images.getJSONObject(i)));
+                    images.add(MatchFacesImageFromJSON(jsonArray_images.getJSONObject(i)));
             }
-            MatchFacesRequest result = new MatchFacesRequest(matchFacesImages);
+            MatchFacesRequest result = new MatchFacesRequest(images);
             if (input.has("customMetadata"))
                 result.setCustomMetadata(new JSONObject(input.getString("customMetadata")));
             if (input.has("thumbnails"))
