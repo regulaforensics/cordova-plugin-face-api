@@ -22,7 +22,7 @@ $ cordova prepare
   * Run `cordova run ios` inside example folder - this is just one way to run the app. You can also run it directly from within Xcode.
 
 ## Documentation
-You can find documentation on API [here](https://docs.regulaforensics.com/cordova-face).
+You can find documentation on API [here](https://docs.regulaforensics.com/develop/face-sdk/mobile).
 
 ## Additional information
 If you have any technical questions, feel free to [contact](mailto:support@regulaforensics.com) us or create issues [here](https://github.com/regulaforensics/cordova-plugin-face-api/issues).
