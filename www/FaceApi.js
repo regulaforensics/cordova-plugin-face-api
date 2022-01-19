@@ -69,10 +69,10 @@ class MatchFacesResponse {
         const result = new MatchFacesResponse()
 
         result.exception = MatchFacesException.fromJson(jsonObject["exception"])
-        result.facesResponse = []
-        if (jsonObject["facesResponse"] != null)
-            for (const i in jsonObject["facesResponse"])
-                result.facesResponse.push(MatchFacesDetection.fromJson(jsonObject["facesResponse"][i]))
+        result.detections = []
+        if (jsonObject["detections"] != null)
+            for (const i in jsonObject["detections"])
+                result.detections.push(MatchFacesDetection.fromJson(jsonObject["detections"][i]))
         result.results = []
         if (jsonObject["results"] != null)
             for (const i in jsonObject["results"])
@@ -99,10 +99,10 @@ class MatchFacesRequest {
         if (jsonObject == null) return null
         const result = new MatchFacesRequest()
 
-        result.matchFacesImages = []
-        if (jsonObject["matchFacesImages"] != null)
-            for (const i in jsonObject["matchFacesImages"])
-                result.matchFacesImages.push(MatchFacesImage.fromJson(jsonObject["matchFacesImages"][i]))
+        result.images = []
+        if (jsonObject["images"] != null)
+            for (const i in jsonObject["images"])
+                result.images.push(MatchFacesImage.fromJson(jsonObject["images"][i]))
         result.customMetadata = jsonObject["customMetadata"]
         result.thumbnails = jsonObject["thumbnails"]
 
@@ -118,6 +118,7 @@ class MatchFacesImage {
         result.imageType = jsonObject["imageType"]
         result.detectAll = jsonObject["detectAll"]
         result.bitmap = jsonObject["bitmap"]
+        result.identifier = jsonObject["identifier"]
 
         return result
     }
@@ -210,6 +211,29 @@ class Rect {
         result.right = jsonObject["right"]
 
         return result
+    }
+}
+
+class MatchFacesSimilarityThresholdSplit {
+    constructor(results, threshold) {
+        this.results = results
+        this.threshold = threshold
+        this.matchedFaces = this.getFaces(true)
+        this.unmatchedFaces = this.getFaces(false)
+    }
+
+    getFaces(matched){
+        const output = []
+        for(const pair of this.results){
+            if(matched){
+                if(pair.similarity > this.threshold && JSON.stringify(pair.exception) == "{}")
+                    output.push(pair)
+            } else {
+                if(pair.similarity <= this.threshold || JSON.stringify(pair.exception) != "{}")
+                    output.push(pair)
+            }
+        }
+        return output
     }
 }
 
@@ -306,6 +330,7 @@ FaceSDK.FaceCaptureResponse = FaceCaptureResponse
 FaceSDK.LivenessResponse = LivenessResponse
 FaceSDK.MatchFacesResponse = MatchFacesResponse
 FaceSDK.MatchFacesRequest = MatchFacesRequest
+FaceSDK.MatchFacesSimilarityThresholdSplit = MatchFacesSimilarityThresholdSplit
 FaceSDK.MatchFacesImage = MatchFacesImage
 
 module.exports = FaceSDK
