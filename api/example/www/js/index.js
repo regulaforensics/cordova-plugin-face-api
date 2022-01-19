@@ -11,6 +11,7 @@ var app = {
         var MatchFacesResponse = FaceSDK.MatchFacesResponse
         var MatchFacesRequest = FaceSDK.MatchFacesRequest
         var MatchFacesImage = FaceSDK.MatchFacesImage
+        var MatchFacesSimilarityThresholdSplit = FaceSDK.MatchFacesSimilarityThresholdSplit
 
         var image1 = new MatchFacesImage()
         var image2 = new MatchFacesImage()
@@ -75,11 +76,12 @@ var app = {
                 return
             document.getElementById("similarityResult").innerHTML = "Processing..."
             request = new MatchFacesRequest()
-            request.matchFacesImages = [image1, image2]
+            request.images = [image1, image2]
             FaceSDK.matchFaces(JSON.stringify(request), response => {
                 response = MatchFacesResponse.fromJson(JSON.parse(response))
-                results = response.results
-                document.getElementById("similarityResult").innerHTML = results.length > 0 ? ((results[0].similarity * 100).toFixed(2) + "%") : "error"
+                split = new MatchFacesSimilarityThresholdSplit(response.results, 0.75)
+                document.getElementById("similarityResult").innerHTML = split.matchedFaces.length > 0 ?
+                    ((split.matchedFaces[0].similarity * 100).toFixed(2) + "%") : "error"
             }, e => { this.setState({ similarity: e }) })
         }
 

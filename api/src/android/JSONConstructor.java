@@ -341,7 +341,7 @@ class JSONConstructor {
         if (input == null) return result;
         try {
             result.put("exception", generateMatchFacesException(input.getException()));
-            result.put("facesResponse", generateList(input.getFacesResponse(), JSONConstructor::generateMatchFacesDetection));
+            result.put("detections", generateList(input.getFacesResponse(), JSONConstructor::generateMatchFacesDetection));
             result.put("results", generateList(input.getResults(), JSONConstructor::generateMatchFacesComparedFacesPair));
         } catch (JSONException e) {
             e.printStackTrace();
@@ -365,7 +365,7 @@ class JSONConstructor {
         JSONObject result = new JSONObject();
         if (input == null) return result;
         try {
-            result.put("matchFacesImages", generateList(input.getMatchFacesImage(), JSONConstructor::generateMatchFacesImage));
+            result.put("images", generateList(input.getMatchFacesImage(), JSONConstructor::generateMatchFacesImage));
             result.put("customMetadata", input.getCustomMetadata());
             result.put("thumbnails", input.isThumbnails());
         } catch (JSONException e) {
@@ -381,6 +381,7 @@ class JSONConstructor {
             result.put("imageType", input.getImageType());
             result.put("detectAll", input.isDetectAll());
             result.put("bitmap", generateBitmap(input.getBitmap()));
+            result.put("identifier", input.getIdentifier());
         } catch (JSONException e) {
             e.printStackTrace();
         }

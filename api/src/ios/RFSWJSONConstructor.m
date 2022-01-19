@@ -9,7 +9,7 @@
 // From JSON
 
 +(RFSMatchFacesRequest*)RFSMatchFacesRequestFromJSON:(NSDictionary*)input {
-    RFSMatchFacesRequest* result = [[RFSMatchFacesRequest alloc] initWithImages:[RFSWJSONConstructor NSArrayRFSMatchFacesImageFromJSON:[input valueForKey:@"matchFacesImages"]]];
+    RFSMatchFacesRequest* result = [[RFSMatchFacesRequest alloc] initWithImages:[RFSWJSONConstructor NSArrayRFSMatchFacesImageFromJSON:[input valueForKey:@"images"]]];
 
     if([input valueForKey:@"thumbnails"] != nil)
         result.thumbnails = [[input valueForKey:@"thumbnails"] boolValue];
@@ -111,6 +111,7 @@
     result[@"imageType"] = @(input.imageType);
     result[@"bitmap"] = [UIImageJPEGRepresentation(input.image, 1.0) base64EncodedStringWithOptions:0];
     result[@"detectAll"] = @(input.detectAll);
+    result[@"identifier"] = input.identifier;
 
     return result;
 }
@@ -132,7 +133,7 @@
         for(RFSMatchFacesDetection* item in input.detections)
             if(item != nil)
                 [array addObject:[self generateRFSMatchFacesDetection:item]];
-        result[@"facesResponse"] = array;
+        result[@"detections"] = array;
     }
 
     return result;
