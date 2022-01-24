@@ -230,8 +230,8 @@ class JSONConstructor {
                     images.add(MatchFacesImageFromJSON(jsonArray_images.getJSONObject(i)));
             }
             MatchFacesRequest result = new MatchFacesRequest(images);
-            if (input.has("customMetadata"))
-                result.setCustomMetadata(new JSONObject(input.getString("customMetadata")));
+            if (input.has("metadata"))
+                result.setCustomMetadata(new JSONObject(input.getString("metadata")));
             if (input.has("thumbnails"))
                 result.setThumbnails(input.getBoolean("thumbnails"));
             return result;
