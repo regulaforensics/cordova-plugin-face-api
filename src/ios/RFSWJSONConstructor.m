@@ -13,6 +13,8 @@
 
     if([input valueForKey:@"thumbnails"] != nil)
         result.thumbnails = [[input valueForKey:@"thumbnails"] boolValue];
+    if([input valueForKey:@"metadata"] != nil)
+        result.metadata = [NSJSONSerialization JSONObjectWithData: [[[input valueForKey:@"metadata"] stringValue] dataUsingEncoding:NSUTF8StringEncoding] options: 0 error: nil];
 
     return result;
 }

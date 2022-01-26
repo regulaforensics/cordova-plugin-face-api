@@ -230,8 +230,8 @@ class JSONConstructor {
                     images.add(MatchFacesImageFromJSON(jsonArray_images.getJSONObject(i)));
             }
             MatchFacesRequest result = new MatchFacesRequest(images);
-            if (input.has("customMetadata"))
-                result.setCustomMetadata(new JSONObject(input.getString("customMetadata")));
+            if (input.has("metadata"))
+                result.setCustomMetadata(new JSONObject(input.getString("metadata")));
             if (input.has("thumbnails"))
                 result.setThumbnails(input.getBoolean("thumbnails"));
             return result;
@@ -341,7 +341,7 @@ class JSONConstructor {
         if (input == null) return result;
         try {
             result.put("exception", generateMatchFacesException(input.getException()));
-            result.put("detections", generateList(input.getFacesResponse(), JSONConstructor::generateMatchFacesDetection));
+            result.put("detections", generateList(input.getDetections(), JSONConstructor::generateMatchFacesDetection));
             result.put("results", generateList(input.getResults(), JSONConstructor::generateMatchFacesComparedFacesPair));
         } catch (JSONException e) {
             e.printStackTrace();
@@ -365,7 +365,7 @@ class JSONConstructor {
         JSONObject result = new JSONObject();
         if (input == null) return result;
         try {
-            result.put("images", generateList(input.getMatchFacesImage(), JSONConstructor::generateMatchFacesImage));
+            result.put("images", generateList(input.getImages(), JSONConstructor::generateMatchFacesImage));
             result.put("customMetadata", input.getCustomMetadata());
             result.put("thumbnails", input.isThumbnails());
         } catch (JSONException e) {
