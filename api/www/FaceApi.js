@@ -226,10 +226,10 @@ class MatchFacesSimilarityThresholdSplit {
         const output = []
         for(const pair of this.results){
             if(matched){
-                if(pair.similarity > this.threshold && JSON.stringify(pair.exception) == "{}")
+                if(pair.similarity >= this.threshold && JSON.stringify(pair.exception) == "{}")
                     output.push(pair)
             } else {
-                if(pair.similarity <= this.threshold || JSON.stringify(pair.exception) != "{}")
+                if(pair.similarity < this.threshold || JSON.stringify(pair.exception) != "{}")
                     output.push(pair)
             }
         }
@@ -253,35 +253,11 @@ const FaceCaptureResultCodes = {
 }
 
 const ImageType = {
-    IMAGE_TYPE_PRINTED: 1,
-    IMAGE_TYPE_RFID: 2,
-    IMAGE_TYPE_LIVE: 3,
-    IMAGE_TYPE_LIVE_WITH_DOC: 4,
+    PRINTED: 1,
+    RFID: 2,
+    LIVE: 3,
+    DOCUMENT_WITH_LIVE: 4,
     EXTERNAL: 5,
-}
-
-const LivenessBackendErrorCodes = {
-    NO_LICENSE: 200,
-    UNDEFINED: -1,
-    LOW_QUALITY: 231,
-    HIGH_ASYMMETRY: 232,
-    TRACK_BREAK: 246,
-    CLOSED_EYES_DETECTED: 230,
-    FACE_OVER_EMOTIONAL: 233,
-    SUNGLASSES_DETECTED: 234,
-    SMALL_AGE: 235,
-    HEADDRESS_DETECTED: 236,
-    MEDICINE_MASK_DETECTED: 239,
-    OCCLUSION_DETECTED: 240,
-    FOREHEAD_GLASSES_DETECTED: 242,
-    MOUTH_OPENED: 243,
-    ART_MASK_DETECTED: 244,
-    NOT_MATCHED: 237,
-    IMAGES_COUNT_LIMIT_EXCEEDED: 238,
-    ELECTRONIC_DEVICE_DETECTED: 245,
-    WRONG_GEO: 247,
-    WRONG_OF: 248,
-    WRONG_VIEW: 249,
 }
 
 const LivenessErrorCode = {
@@ -300,11 +276,6 @@ const LivenessStatus = {
     UNKNOWN: 1,
 }
 
-const MatchFacesDetectionCode = {
-    IMAGE_EMPTY: 1,
-    FACE_NOT_DETECTED: 2,
-}
-
 const MatchFacesErrorCodes = {
     IMAGE_EMPTY: 1,
     FACE_NOT_DETECTED: 2,
@@ -321,10 +292,8 @@ const Enum = {
    CameraPosition,
    FaceCaptureResultCodes,
    ImageType,
-   LivenessBackendErrorCodes,
    LivenessErrorCode,
    LivenessStatus,
-   MatchFacesDetectionCode,
    MatchFacesErrorCodes,
 }
 
@@ -341,8 +310,6 @@ FaceSDK.startLivenessWithConfig = (config, successCallback, errorCallback) => co
 FaceSDK.setServiceUrl = (url, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["setServiceUrl", url])
 FaceSDK.matchFaces = (request, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["matchFaces", request])
 FaceSDK.setLanguage = (language, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["setLanguage", language])
-FaceSDK.setConfig = (config, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["setConfig", config])
-FaceSDK.matchFacesWithConfig = (request, config, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["matchFacesWithConfig", request, config])
 
 FaceSDK.Enum = Enum
 FaceSDK.FaceCaptureResponse = FaceCaptureResponse
