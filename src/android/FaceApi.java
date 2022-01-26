@@ -7,7 +7,8 @@ import android.content.res.Resources;
 
 import com.regula.facesdk.configuration.FaceCaptureConfiguration;
 import com.regula.facesdk.configuration.LivenessConfiguration;
-import com.regula.facesdk.configuration.MatchFaceConfiguration;
+import com.regula.facesdk.model.results.matchfaces.MatchFacesComparedFacesPair;
+import com.regula.facesdk.model.results.matchfaces.MatchFacesSimilarityThresholdSplit;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
@@ -101,11 +102,8 @@ public class FaceApi extends CordovaPlugin {
                 case "setLanguage":
                     setLanguage(callback, args(0));
                     break;
-                case "setConfig":
-                    setConfig(callback, args(0));
-                    break;
-                case "matchFacesWithConfig":
-                    matchFacesWithConfig(callback, args(0), args(1));
+                case "matchFacesSimilarityThresholdSplit":
+                    matchFacesSimilarityThresholdSplit(callback, args(0), args(1));
                     break;
             }
         } catch (Exception ignored) {
@@ -170,18 +168,14 @@ public class FaceApi extends CordovaPlugin {
         callback.success();
     }
 
-    private void setConfig(Callback callback, JSONObject config) {
-        callback.error("setConfig() is an ios-only method");
-    }
-
     private void matchFaces(Callback callback, String request) throws JSONException {
         Instance().matchFaces(Objects.requireNonNull(JSONConstructor.MatchFacesRequestFromJSON(new JSONObject(request))), (response) -> callback.success(JSONConstructor.generateMatchFacesResponse(response).toString()));
     }
 
-    private void matchFacesWithConfig(Callback callback, String request, JSONObject config) throws JSONException {
-        MatchFaceConfiguration.Builder builder = new MatchFaceConfiguration.Builder();
-        config.has("TODO"); // in order to remove warning Unused
-        Instance().matchFaces(Objects.requireNonNull(JSONConstructor.MatchFacesRequestFromJSON(new JSONObject(request))), builder.build(),(response) -> callback.success(JSONConstructor.generateMatchFacesResponse(response).toString()));
+    private void matchFacesSimilarityThresholdSplit(Callback callback, JSONArray array, Double similarity) {
+        List<MatchFacesComparedFacesPair> faces = JSONConstructor.MatchFacesComparedFacesPairListFromJSON(array);
+        MatchFacesSimilarityThresholdSplit split = new MatchFacesSimilarityThresholdSplit(faces, similarity);
+        callback.success(JSONConstructor.generateMatchFacesSimilarityThresholdSplit(split).toString());
     }
 
     private void setLanguage(Callback callback, @SuppressWarnings("unused") String language) {
