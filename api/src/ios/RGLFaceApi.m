@@ -43,6 +43,8 @@ typedef void (^Callback)(NSString* response);
         [self matchFaces :[args objectAtIndex:0] :successCallback :errorCallback];
     else if([action isEqualToString:@"setLanguage"])
         [self setLanguage :[args objectAtIndex:0] :successCallback :errorCallback];
+    else if([action isEqualToString:@"matchFacesSimilarityThresholdSplit"])
+        [self matchFacesSimilarityThresholdSplit :[args objectAtIndex:0] :[args objectAtIndex:1] :successCallback :errorCallback];
     else
         [self result:[NSString stringWithFormat:@"%@/%@", @"method not implemented: ", action] :errorCallback];
 }
