@@ -305,7 +305,7 @@ FaceSDK.startLivenessWithConfig = (config, successCallback, errorCallback) => co
 FaceSDK.setServiceUrl = (url, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["setServiceUrl", url])
 FaceSDK.matchFaces = (request, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["matchFaces", request])
 FaceSDK.setLanguage = (language, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["setLanguage", language])
-FaceSDK.matchFacesSimilarityThresholdSplit = (similarity, faces, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["matchFacesSimilarityThresholdSplit", similarity, faces])
+FaceSDK.matchFacesSimilarityThresholdSplit = (faces, similarity, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["matchFacesSimilarityThresholdSplit", faces, similarity])
 
 FaceSDK.Enum = Enum
 FaceSDK.FaceCaptureResponse = FaceCaptureResponse

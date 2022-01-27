@@ -79,7 +79,7 @@ var app = {
             request.images = [image1, image2]
             FaceSDK.matchFaces(JSON.stringify(request), response => {
                 response = MatchFacesResponse.fromJson(JSON.parse(response))
-                FaceSDK.matchFacesSimilarityThresholdSplit(response.results, 0.75, (split) => {
+                FaceSDK.matchFacesSimilarityThresholdSplit(JSON.stringify(response.results), 0.75, (split) => {
                     split = MatchFacesSimilarityThresholdSplit.fromJson(JSON.parse(split))
                     document.getElementById("similarityResult").innerHTML = split.matchedFaces.length > 0 ?
                         ((split.matchedFaces[0].similarity * 100).toFixed(2) + "%") : "error"
