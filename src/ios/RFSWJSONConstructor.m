@@ -172,7 +172,7 @@
         right = [[input valueForKey:@"right"] floatValue];
     }
 
-    return CGRectMake(left, bottom, right, top);
+    return CGRectMake(left, top, right - left, bottom - top);
 }
 
 +(NSMutableArray<RFSPoint*>*)NSArrayRFSPointFromJSON:(NSArray*)input {
