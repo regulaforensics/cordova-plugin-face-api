@@ -173,8 +173,8 @@ public class FaceApi extends CordovaPlugin {
         Instance().matchFaces(Objects.requireNonNull(JSONConstructor.MatchFacesRequestFromJSON(new JSONObject(request))), (response) -> callback.success(JSONConstructor.generateMatchFacesResponse(response).toString()));
     }
 
-    private void matchFacesSimilarityThresholdSplit(Callback callback, JSONArray array, Double similarity) {
-        List<MatchFacesComparedFacesPair> faces = JSONConstructor.MatchFacesComparedFacesPairListFromJSON(array);
+    private void matchFacesSimilarityThresholdSplit(Callback callback, String array, Double similarity) throws JSONException {
+        List<MatchFacesComparedFacesPair> faces = JSONConstructor.MatchFacesComparedFacesPairListFromJSON(new JSONArray(array));
         MatchFacesSimilarityThresholdSplit split = new MatchFacesSimilarityThresholdSplit(faces, similarity);
         callback.success(JSONConstructor.generateMatchFacesSimilarityThresholdSplit(split).toString());
     }
