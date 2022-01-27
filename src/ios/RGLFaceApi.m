@@ -139,6 +139,12 @@ typedef void (^Callback)(NSString* response);
     [RFSFaceSDK.service matchFaces:[RFSWJSONConstructor RFSMatchFacesRequestFromJSON:[NSJSONSerialization JSONObjectWithData:[requestString dataUsingEncoding:NSUTF8StringEncoding] options:0 error:NULL]] completion:[self getMatchFacesCompletion:successCallback :errorCallback]];
 }
 
+- (void) matchFacesSimilarityThresholdSplit:(NSArray*)array :(NSNumber*)similarity :(Callback)successCallback :(Callback)errorCallback{
+    NSArray<RFSMatchFacesComparedFacesPair *> *faces = [RFSWJSONConstructor NSArrayRFSMatchFacesComparedFacesPairFromJSON:array];
+    RFSMatchFacesSimilarityThresholdSplit *split = [RFSMatchFacesSimilarityThresholdSplit splitPairs:faces bySimilarityThreshold:similarity];
+    [self result:[RFSWJSONConstructor dictToString:[RFSWJSONConstructor generateRFSMatchFacesSimilarityThresholdSplit:split]] :successCallback];
+}
+
 - (void) setLanguage:(NSString*)language :(Callback)successCallback :(Callback)errorCallback{
     RFSFaceSDK.service.localizationHandler = ^NSString * _Nullable(NSString * _Nonnull localizationKey) {
         NSString *result = NSLocalizedStringFromTable(localizationKey, language, @"");
