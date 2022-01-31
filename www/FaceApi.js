@@ -239,7 +239,7 @@ const CameraPosition = {
     Front: 1,
 }
 
-const FaceCaptureResultCodes = {
+const FaceCaptureErrorCode = {
     CANCEL: 1,
     CAMERA_NOT_AVAILABLE: 2,
     CAMERA_NO_PERMISSION: 3,
@@ -278,14 +278,14 @@ const MatchFacesErrorCodes = {
     FACE_ALIGNER_FAILED: 4,
     DESCRIPTOR_EXTRACTOR_ERROR: 5,
     NO_LICENSE: 6,
-    COUNT_LIMIT_EXCEEDED: 7,
+    IMAGES_COUNT_LIMIT_EXCEEDED: 7,
     API_CALL_FAILED: 8,
     PROCESSING_FAILED: 9,
 }
 
 const Enum = {
    CameraPosition,
-   FaceCaptureResultCodes,
+   FaceCaptureErrorCode,
    ImageType,
    LivenessErrorCode,
    LivenessStatus,
