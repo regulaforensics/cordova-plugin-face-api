@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<plugin id="cordova-plugin-face-api" version="0.0.50"
+<plugin id="cordova-plugin-face-api" version="0.0.51"
   xmlns="http://apache.org/cordova/ns/plugins/1.0">
   <name>FaceApi</name>
   <description>Cordova plugin Face Api</description>
