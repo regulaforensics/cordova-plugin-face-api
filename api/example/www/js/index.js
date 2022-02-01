@@ -10,9 +10,11 @@ var app = {
         var LivenessResponse = FaceSDK.LivenessResponse
         var MatchFacesResponse = FaceSDK.MatchFacesResponse
         var MatchFacesRequest = FaceSDK.MatchFacesRequest
+        var MatchFacesImage = FaceSDK.MatchFacesImage
+        var MatchFacesSimilarityThresholdSplit = FaceSDK.MatchFacesSimilarityThresholdSplit
 
-        var image1 = new FaceSDK.Image()
-        var image2 = new FaceSDK.Image()
+        var image1 = new MatchFacesImage()
+        var image2 = new MatchFacesImage()
 
         document.getElementById("similarityResult").innerHTML = "nil"
         document.getElementById("livenessResult").innerHTML = "nil"
@@ -27,7 +29,7 @@ var app = {
             navigator.notification.confirm("Choose the option", button => {
                 if (button == 1)
                 FaceSDK.presentFaceCaptureActivity(result => {
-                        setImage(first, FaceCaptureResponse.fromJson(JSON.parse(result)).image.bitmap, Enum.ImageType.IMAGE_TYPE_LIVE)
+                        setImage(first, FaceCaptureResponse.fromJson(JSON.parse(result)).image.bitmap, Enum.ImageType.LIVE)
                     }, e => { })
                 else if (button == 2)
                     if (window.cordova.platformId == "android")
@@ -40,7 +42,7 @@ var app = {
         function useGallery(first) {
             window.imagePicker.getPictures(function (results) {
                 readFile(results[0], function (base64) {
-                    setImage(first, base64, Enum.ImageType.IMAGE_TYPE_PRINTED)
+                    setImage(first, base64, Enum.ImageType.PRINTED)
                 })
             }, function (e) { }, { maximumImagesCount: 1 })
         }
@@ -65,8 +67,8 @@ var app = {
             document.getElementById("img2").src = "img/portrait.png"
             document.getElementById("similarityResult").innerHTML = "nil"
             document.getElementById("livenessResult").innerHTML = "nil"
-            image1 = new FaceSDK.Image()
-            image2 = new FaceSDK.Image()
+            image1 = new MatchFacesImage()
+            image2 = new MatchFacesImage()
         }
 
         function matchFaces() {
@@ -77,8 +79,11 @@ var app = {
             request.images = [image1, image2]
             FaceSDK.matchFaces(JSON.stringify(request), response => {
                 response = MatchFacesResponse.fromJson(JSON.parse(response))
-                matchedFaces = response.matchedFaces
-                document.getElementById("similarityResult").innerHTML = matchedFaces.length > 0 ? ((matchedFaces[0].similarity * 100).toFixed(2) + "%") : "error"
+                FaceSDK.matchFacesSimilarityThresholdSplit(JSON.stringify(response.results), 0.75, (split) => {
+                    split = MatchFacesSimilarityThresholdSplit.fromJson(JSON.parse(split))
+                    document.getElementById("similarityResult").innerHTML = split.matchedFaces.length > 0 ?
+                        ((split.matchedFaces[0].similarity * 100).toFixed(2) + "%") : "error"
+                }, (error) => {});
             }, e => { this.setState({ similarity: e }) })
         }
 
@@ -86,7 +91,7 @@ var app = {
             FaceSDK.startLiveness(result => {
                 result = LivenessResponse.fromJson(JSON.parse(result))
 
-                setImage(true, result.bitmap, Enum.ImageType.IMAGE_TYPE_LIVE)
+                setImage(true, result.bitmap, Enum.ImageType.LIVE)
                 if (result.bitmap != null)
                     document.getElementById("livenessResult").innerHTML = result["liveness"] == 0 ? "passed" : "unknown"
             }, e => { })

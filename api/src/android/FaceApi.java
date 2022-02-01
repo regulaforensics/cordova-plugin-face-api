@@ -2,10 +2,13 @@ package cordova.plugin.faceapi;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.res.Configuration;
+import android.content.res.Resources;
 
 import com.regula.facesdk.configuration.FaceCaptureConfiguration;
 import com.regula.facesdk.configuration.LivenessConfiguration;
-import com.regula.facesdk.configuration.MatchFaceConfiguration;
+import com.regula.facesdk.model.results.matchfaces.MatchFacesComparedFacesPair;
+import com.regula.facesdk.model.results.matchfaces.MatchFacesSimilarityThresholdSplit;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
@@ -14,6 +17,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import static com.regula.facesdk.FaceSDK.Instance;
+
+import java.util.List;
+import java.util.Locale;
+import java.util.Objects;
 
 @SuppressWarnings({"ConstantConditions", "RedundantSuppression"})
 public class FaceApi extends CordovaPlugin {
@@ -96,8 +103,8 @@ public class FaceApi extends CordovaPlugin {
                 case "setLanguage":
                     setLanguage(callback, args(0));
                     break;
-                case "matchFacesWithConfig":
-                    matchFacesWithConfig(callback, args(0), args(1));
+                case "matchFacesSimilarityThresholdSplit":
+                    matchFacesSimilarityThresholdSplit(callback, args(0), args(1));
                     break;
             }
         } catch (Exception ignored) {
@@ -152,6 +159,8 @@ public class FaceApi extends CordovaPlugin {
             builder.setCameraSwitchEnabled(config.getBoolean("cameraSwitchEnabled"));
         if(config.has("showHelpTextAnimation"))
             builder.setShowHelpTextAnimation(config.getBoolean("showHelpTextAnimation"));
+        if(config.has("locationTrackingEnabled"))
+            builder.setLocationTrackingEnabled(config.getBoolean("locationTrackingEnabled"));
         Instance().startLiveness(getContext(), builder.build(), (response) -> callback.success(JSONConstructor.generateLivenessResponse(response).toString()));
     }
 
@@ -161,16 +170,22 @@ public class FaceApi extends CordovaPlugin {
     }
 
     private void matchFaces(Callback callback, String request) throws JSONException {
-        Instance().matchFaces(JSONConstructor.MatchFacesRequestFromJSON(new JSONObject(request)), (response) -> callback.success(JSONConstructor.generateMatchFacesResponse(response).toString()));
+        Instance().matchFaces(Objects.requireNonNull(JSONConstructor.MatchFacesRequestFromJSON(new JSONObject(request))), (response) -> callback.success(JSONConstructor.generateMatchFacesResponse(response).toString()));
     }
 
-    private void matchFacesWithConfig(Callback callback, String request, JSONObject config) throws JSONException {
-        MatchFaceConfiguration.Builder builder = new MatchFaceConfiguration.Builder();
-        config.has("TODO"); // in order to remove warning Unused
-        Instance().matchFaces(JSONConstructor.MatchFacesRequestFromJSON(new JSONObject(request)), builder.build(),(response) -> callback.success(JSONConstructor.generateMatchFacesResponse(response).toString()));
+    private void matchFacesSimilarityThresholdSplit(Callback callback, String array, Double similarity) throws JSONException {
+        List<MatchFacesComparedFacesPair> faces = JSONConstructor.MatchFacesComparedFacesPairListFromJSON(new JSONArray(array));
+        MatchFacesSimilarityThresholdSplit split = new MatchFacesSimilarityThresholdSplit(faces, similarity);
+        callback.success(JSONConstructor.generateMatchFacesSimilarityThresholdSplit(split).toString());
     }
 
     private void setLanguage(Callback callback, @SuppressWarnings("unused") String language) {
-        callback.error("setLanguage() is an ios-only method");
+        Locale locale = new Locale(language);
+        Locale.setDefault(locale);
+        Resources resources = getContext().getResources();
+        Configuration config = resources.getConfiguration();
+        config.setLocale(locale);
+        resources.updateConfiguration(config, resources.getDisplayMetrics());
+        callback.success();
     }
 }
