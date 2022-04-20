@@ -12,6 +12,7 @@ Face API is a framework that is used for face matching, recognition and liveness
 ```bash
 $ cd example
 $ npm install
+$ npx jetify
 $ cordova prepare
 ```
 
