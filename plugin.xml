@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<plugin id="cordova-plugin-face-api" version="4.1.1"
+<plugin id="cordova-plugin-face-api" version="4.1.2"
   xmlns="http://apache.org/cordova/ns/plugins/1.0">
   <name>FaceApi</name>
   <description>Cordova plugin Face Api</description>
@@ -21,7 +21,8 @@
     <header-file src="src/ios/RFSWJSONConstructor.h" />
     <source-file src="src/ios/RFSWJSONConstructor.m" />
     <podspec>
-      <config/>
+        <config>
+        </config>
       <pods>
         <pod name="FaceSDK" spec="~> 4.1.1217" />
       </pods>
