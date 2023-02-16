@@ -19,6 +19,9 @@
     <platform name="android">
         <preference name="AndroidXEnabled" value="true" />
         <allow-intent href="market:*" />
+        <config-file parent="/manifest/application" target="AndroidManifest.xml">
+            <activity android:label="@string/multi_app_name" android:name="com.synconset.MultiImageChooserActivity" android:theme="@style/Theme.AppCompat.Light" />
+        </config-file>
         <config-file parent="/*" target="AndroidManifest.xml">
             <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
         </config-file>
