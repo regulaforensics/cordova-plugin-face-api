@@ -26,10 +26,12 @@ var app = {
         document.getElementById("clearResults").addEventListener("click", clearResults)
 
         FaceSDK.init(json => {
-            response = JSON.parse(response)
+            response = JSON.parse(json)
             if (!response["success"]) {
                 console.log("Init failed: ");
                 console.log(json);
+            } else {
+                console.log("Init complete")
             }
         }, e => {})
 
