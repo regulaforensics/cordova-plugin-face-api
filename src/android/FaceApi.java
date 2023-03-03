@@ -8,22 +8,26 @@ import android.content.res.Resources;
 import com.regula.facesdk.configuration.FaceCaptureConfiguration;
 import com.regula.facesdk.configuration.LivenessConfiguration;
 import com.regula.facesdk.configuration.MatchFaceConfiguration;
+import com.regula.facesdk.exception.InitException;
 import com.regula.facesdk.model.results.matchfaces.MatchFacesComparedFacesPair;
 import com.regula.facesdk.model.results.matchfaces.MatchFacesSimilarityThresholdSplit;
 
 import org.apache.cordova.CallbackContext;
 import org.apache.cordova.CordovaPlugin;
+import org.apache.cordova.PluginResult;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import static com.regula.facesdk.FaceSDK.Instance;
 
+import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
 @SuppressWarnings({"ConstantConditions", "RedundantSuppression"})
 public class FaceApi extends CordovaPlugin {
+    private CallbackContext callbackContext;
     private Activity activity;
     JSONArray data;
 
@@ -46,8 +50,15 @@ public class FaceApi extends CordovaPlugin {
         return (T) data.get(index);
     }
 
+    private void sendVideoEncoderCompletion(String transactionId, boolean success) {
+        PluginResult pluginResult = new PluginResult(PluginResult.Status.OK, JSONConstructor.generateVideoEncoderCompletion(transactionId, success).toString());
+        pluginResult.setKeepCallback(true);
+        callbackContext.sendPluginResult(pluginResult);
+    }
+
     @Override
     public boolean execute(String action, JSONArray args, CallbackContext callbackContext) {
+        this.callbackContext = callbackContext;
         activity = cordova.getActivity();
         action = (String)args.remove(0);
         data = args;
@@ -85,8 +96,20 @@ public class FaceApi extends CordovaPlugin {
                 case "stopFaceCaptureActivity":
                     stopFaceCaptureActivity(callback);
                     break;
+                case "init":
+                    init(callback);
+                    break;
+                case "deinit":
+                    deinit(callback);
+                    break;
+                case "isInitialized":
+                    isInitialized(callback);
+                    break;
                 case "stopLivenessProcessing":
                     stopLivenessProcessing(callback);
+                    break;
+                case "setRequestHeaders":
+                    setRequestHeaders(callback, args(0));
                     break;
                 case "presentFaceCaptureActivityWithConfig":
                     presentFaceCaptureActivityWithConfig(callback, args(0));
@@ -100,6 +123,9 @@ public class FaceApi extends CordovaPlugin {
                 case "matchFaces":
                     matchFaces(callback, args(0));
                     break;
+                case "detectFaces":
+                    detectFaces(callback, args(0));
+                    break;
                 case "matchFacesWithConfig":
                     matchFacesWithConfig(callback, args(0), args(1));
                     break;
@@ -110,7 +136,8 @@ public class FaceApi extends CordovaPlugin {
                     matchFacesSimilarityThresholdSplit(callback, args(0), args(1));
                     break;
             }
-        } catch (Exception ignored) {
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return true;
     }
@@ -119,8 +146,28 @@ public class FaceApi extends CordovaPlugin {
         callback.success(Instance().getServiceUrl());
     }
 
+    private void setRequestHeaders(Callback callback, JSONObject headers) {
+        Instance().setNetworkInterceptorListener(requestBuilder -> {
+            try {
+                Iterator<String> keys = headers.keys();
+                while (keys.hasNext()) {
+                    String key = keys.next();
+                    String value = (String) headers.get(key);
+                    requestBuilder.header(key, value);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        });
+        callback.success();
+    }
+
     private void startLiveness(Callback callback) {
         Instance().startLiveness(getContext(), (response) -> callback.success(JSONConstructor.generateLivenessResponse(response).toString()));
+    }
+
+    private void detectFaces(Callback callback, String request) throws JSONException {
+        Instance().detectFaces(JSONConstructor.DetectFacesRequestFromJSON(new JSONObject(request)), (response) -> callback.success(JSONConstructor.generateDetectFacesResponse(response).toString()));
     }
 
     private void getFaceSdkVersion(Callback callback) {
@@ -143,8 +190,6 @@ public class FaceApi extends CordovaPlugin {
 
     private void presentFaceCaptureActivityWithConfig(Callback callback, JSONObject config) throws JSONException {
         FaceCaptureConfiguration.Builder builder = new FaceCaptureConfiguration.Builder();
-        if (config.has("forceToUseHuaweiVision"))
-            builder.setForceToUseHuaweiVision(config.getBoolean("forceToUseHuaweiVision"));
         if (config.has("cameraId"))
             builder.setCameraId(config.getInt("cameraId"));
         if (config.has("cameraSwitchEnabled"))
@@ -155,27 +200,25 @@ public class FaceApi extends CordovaPlugin {
             builder.setCloseButtonEnabled(config.getBoolean("closeButtonEnabled"));
         if (config.has("torchButtonEnabled"))
             builder.setTorchButtonEnabled(config.getBoolean("torchButtonEnabled"));
+        if (config.has("timeout"))
+            builder.setTimeout(config.getInt("timeout"));
         Instance().presentFaceCaptureActivity(getContext(), builder.build(), (response) -> callback.success(JSONConstructor.generateFaceCaptureResponse(response).toString()));
     }
 
     private void startLivenessWithConfig(Callback callback, JSONObject config) throws JSONException {
         LivenessConfiguration.Builder builder = new LivenessConfiguration.Builder();
-        if (config.has("forceToUseHuaweiVision"))
-            builder.setForceToUseHuaweiVision(config.getBoolean("forceToUseHuaweiVision"));
         if (config.has("attemptsCount"))
             builder.setAttemptsCount(config.getInt("attemptsCount"));
-        if (config.has("cameraId"))
-            builder.setCameraId(config.getInt("cameraId"));
-        if (config.has("cameraSwitchEnabled"))
-            builder.setCameraSwitchEnabled(config.getBoolean("cameraSwitchEnabled"));
+        if (config.has("sessionId"))
+            builder.setSessionId(config.getString("sessionId"));
+        if (config.has("skipStep"))
+            builder.setSkipStep(JSONConstructor.LivenessSkipStepArrayFromJSON(config.getInt("skipStep")));
         if (config.has("showHelpTextAnimation"))
             builder.setShowHelpTextAnimation(config.getBoolean("showHelpTextAnimation"));
         if (config.has("locationTrackingEnabled"))
             builder.setLocationTrackingEnabled(config.getBoolean("locationTrackingEnabled"));
         if (config.has("closeButtonEnabled"))
             builder.setCloseButtonEnabled(config.getBoolean("closeButtonEnabled"));
-        if (config.has("torchButtonEnabled"))
-            builder.setTorchButtonEnabled(config.getBoolean("torchButtonEnabled"));
         if (config.has("recordingProcess"))
             builder.setRecordingProcess(config.getBoolean("recordingProcess"));
         Instance().startLiveness(getContext(), builder.build(), (response) -> callback.success(JSONConstructor.generateLivenessResponse(response).toString()));
@@ -186,24 +229,39 @@ public class FaceApi extends CordovaPlugin {
         callback.success();
     }
 
+    private void init(Callback callback) {
+        Instance().init(getContext(), (boolean success, InitException error) -> {
+            if (success)
+                Instance().setVideoEncoderCompletion(this::sendVideoEncoderCompletion);
+            callback.success(JSONConstructor.generateInitCompletion(success, error).toString());
+        });
+    }
+
+    private void deinit(Callback callback) {
+        Instance().deinit();
+        callback.success();
+    }
+
+    private void isInitialized(Callback callback) {
+        callback.success(Instance().isInitialized());
+    }
+
     private void matchFaces(Callback callback, String request) throws JSONException {
         Instance().matchFaces(JSONConstructor.MatchFacesRequestFromJSON(new JSONObject(request)), (response) -> callback.success(JSONConstructor.generateMatchFacesResponse(response).toString()));
     }
 
-    private void matchFacesWithConfig(Callback callback, String request, JSONObject config) throws JSONException {
+    private void matchFacesWithConfig(Callback callback, String request, @SuppressWarnings("unused") JSONObject config) throws JSONException {
         MatchFaceConfiguration.Builder builder = new MatchFaceConfiguration.Builder();
-        if (config.has("forceToUseHuaweiVision"))
-            builder.setForceToUseHuaweiVision(config.getBoolean("forceToUseHuaweiVision"));
         Instance().matchFaces(JSONConstructor.MatchFacesRequestFromJSON(new JSONObject(request)), builder.build(), (response) -> callback.success(JSONConstructor.generateMatchFacesResponse(response).toString()));
     }
 
     private void matchFacesSimilarityThresholdSplit(Callback callback, String array, Double similarity) throws JSONException {
-        List<MatchFacesComparedFacesPair> faces = JSONConstructor.MatchFacesComparedFacesPairListFromJSON(new JSONArray(array));
+        List<MatchFacesComparedFacesPair> faces = JSONConstructor.listFromJSON(new JSONArray(array), JSONConstructor::MatchFacesComparedFacesPairFromJSON);
         MatchFacesSimilarityThresholdSplit split = new MatchFacesSimilarityThresholdSplit(faces, similarity);
         callback.success(JSONConstructor.generateMatchFacesSimilarityThresholdSplit(split).toString());
     }
 
-    private void setLanguage(Callback callback, @SuppressWarnings("unused") String language) {
+    private void setLanguage(Callback callback, String language) {
         Locale locale = new Locale(language);
         Locale.setDefault(locale);
         Resources resources = getContext().getResources();

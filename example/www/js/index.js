@@ -25,6 +25,16 @@ var app = {
         document.getElementById("liveness").addEventListener("click", liveness)
         document.getElementById("clearResults").addEventListener("click", clearResults)
 
+        FaceSDK.init(json => {
+            response = JSON.parse(json)
+            if (!response["success"]) {
+                console.log("Init failed: ");
+                console.log(json);
+            } else {
+                console.log("Init complete")
+            }
+        }, e => {})
+
         function pickImage(first) {
             navigator.notification.confirm("Choose the option", button => {
                 if (button == 1)
@@ -41,10 +51,8 @@ var app = {
 
         function useGallery(first) {
             window.imagePicker.getPictures(function (results) {
-                readFile(results[0], function (base64) {
-                    setImage(first, base64, Enum.ImageType.PRINTED)
-                })
-            }, function (e) { }, { maximumImagesCount: 1 })
+                setImage(first, results[0], Enum.ImageType.PRINTED)
+            }, function (e) { }, { maximumImagesCount: 1, outputType: window.imagePicker.OutputType.BASE64_STRING })
         }
 
         function setImage(first, base64, type) {
@@ -93,7 +101,7 @@ var app = {
 
                 setImage(true, result.bitmap, Enum.ImageType.LIVE)
                 if (result.bitmap != null)
-                    document.getElementById("livenessResult").innerHTML = result["liveness"] == 0 ? "passed" : "unknown"
+                    document.getElementById("livenessResult").innerHTML = result["liveness"] == Enum.LivenessStatus.PASSED ? "passed" : "unknown"
             }, e => { })
         }
 
@@ -111,20 +119,6 @@ var app = {
                     })
                 }
             })
-        }
-
-        function readFile(path, callback, ...items) {
-            if (path.substring(0, 8) !== "file:///")
-                path = cordova.file.applicationDirectory + path
-            window.resolveLocalFileSystemURL(path, function (fileEntry) {
-                fileEntry.file(function (file) {
-                    var reader = new FileReader()
-                    reader.onloadend = function (e) {
-                        callback(this.result.substring(this.result.indexOf(',') + 1), items)
-                    }
-                    reader.readAsDataURL(file)
-                })
-            }, function (e) { console.log(JSON.stringify(e)) })
         }
     },
 

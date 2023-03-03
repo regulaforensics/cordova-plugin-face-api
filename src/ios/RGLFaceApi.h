@@ -3,6 +3,6 @@
 #import "RFSWJSONConstructor.h"
 @import FaceSDK;
 
-@interface RGLFaceApi : CDVPlugin
-
+@interface RGLFaceApi : CDVPlugin<RFSURLRequestInterceptingDelegate, RFSVideoUploadingDelegate>
+@property NSDictionary* _Nullable headers;
 @end
