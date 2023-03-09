@@ -1,0 +1,13 @@
+repositories {
+    maven {
+        url "http://ftp.regula.local/RegulaDocumentReaderGit"
+        allowInsecureProtocol = true
+    }
+}
+
+dependencies {
+    //noinspection GradleDependency
+    implementation('com.regula.face:api:4.2.2334'){
+        transitive = true
+    }
+}
