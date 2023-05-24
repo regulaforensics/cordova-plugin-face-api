@@ -5,13 +5,16 @@ var app = {
 
     onDeviceReady: function () {
         this.receivedEvent('deviceready')
-        var Enum = FaceSDK.Enum
-        var FaceCaptureResponse = FaceSDK.FaceCaptureResponse
-        var LivenessResponse = FaceSDK.LivenessResponse
-        var MatchFacesResponse = FaceSDK.MatchFacesResponse
-        var MatchFacesRequest = FaceSDK.MatchFacesRequest
-        var MatchFacesImage = FaceSDK.MatchFacesImage
-        var MatchFacesSimilarityThresholdSplit = FaceSDK.MatchFacesSimilarityThresholdSplit
+
+        // This way you can import any class declared in FaceSDKPlugin
+        var FaceSDK = FaceSDKPlugin.FaceSDK
+        var FaceCaptureResponse = FaceSDKPlugin.FaceCaptureResponse
+        var LivenessResponse = FaceSDKPlugin.LivenessResponse
+        var MatchFacesResponse = FaceSDKPlugin.MatchFacesResponse
+        var MatchFacesRequest = FaceSDKPlugin.MatchFacesRequest
+        var MatchFacesImage = FaceSDKPlugin.MatchFacesImage
+        var MatchFacesSimilarityThresholdSplit = FaceSDKPlugin.MatchFacesSimilarityThresholdSplit
+        var Enum = FaceSDKPlugin.Enum
 
         var image1 = new MatchFacesImage()
         var image2 = new MatchFacesImage()
