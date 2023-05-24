@@ -81,7 +81,7 @@ class LivenessResponse {
 
         result.bitmap = jsonObject["bitmap"]
         result.liveness = jsonObject["liveness"]
-        result.tag = jsonObject["tag"]
+        result.sessionId = jsonObject["sessionId"]
         result.transactionId = jsonObject["transactionId"]
         result.exception = LivenessErrorException.fromJson(jsonObject["exception"])
 
@@ -94,7 +94,6 @@ class MatchFacesResponse {
         if (jsonObject == null) return null
         const result = new MatchFacesResponse()
 
-        result.tag = jsonObject["tag"]
         result.exception = MatchFacesException.fromJson(jsonObject["exception"])
         result.detections = []
         if (jsonObject["detections"] != null)
@@ -117,7 +116,10 @@ class Image {
         result.imageType = jsonObject["imageType"]
         result.bitmap = jsonObject["bitmap"]
         result.tag = jsonObject["tag"]
-        result.imageData = jsonObject["imageData"]
+        result.imageData = []
+        if (jsonObject["imageData"] != null)
+            for (const i in jsonObject["imageData"])
+                result.imageData.push(jsonObject["imageData"][i])
 
         return result
     }
@@ -134,7 +136,6 @@ class MatchFacesRequest {
                 result.images.push(MatchFacesImage.fromJson(jsonObject["images"][i]))
         result.customMetadata = jsonObject["customMetadata"]
         result.thumbnails = jsonObject["thumbnails"]
-        result.tag = jsonObject["tag"]
 
         return result
     }
@@ -267,7 +268,6 @@ class DetectFacesRequest {
         if (jsonObject == null) return null
         const result = new DetectFacesRequest()
 
-        result.tag = jsonObject["tag"]
         result.scenario = jsonObject["scenario"]
         result.image = jsonObject["image"]
         result.configuration = DetectFacesConfiguration.fromJson(jsonObject["configuration"])
@@ -457,134 +457,6 @@ class DetectFacesAttributeResult {
     }
 }
 
-class Person {
-    static fromJson(jsonObject) {
-        if (jsonObject == null) return null
-        const result = new Person()
-
-        result.name = jsonObject["name"]
-        result.updatedAt = jsonObject["updatedAt"]
-        result.id = jsonObject["id"]
-        result.metadata = jsonObject["metadata"]
-        result.createdAt = jsonObject["createdAt"]
-
-        return result
-    }
-}
-
-class PersonGroup {
-    static fromJson(jsonObject) {
-        if (jsonObject == null) return null
-        const result = new PersonGroup()
-
-        result.name = jsonObject["name"]
-        result.id = jsonObject["id"]
-        result.metadata = jsonObject["metadata"]
-        result.createdAt = jsonObject["createdAt"]
-
-        return result
-    }
-}
-
-class PersonImage {
-    static fromJson(jsonObject) {
-        if (jsonObject == null) return null
-        const result = new PersonImage()
-
-        result.path = jsonObject["path"]
-        result.url = jsonObject["url"]
-        result.contentType = jsonObject["contentType"]
-        result.id = jsonObject["id"]
-        result.metadata = jsonObject["metadata"]
-        result.createdAt = jsonObject["createdAt"]
-
-        return result
-    }
-}
-
-class ImageUpload {
-    static fromJson(jsonObject) {
-        if (jsonObject == null) return null
-        const result = new ImageUpload()
-
-        result.imageData = jsonObject["imageData"]
-
-        return result
-    }
-}
-
-class EditGroupPersonsRequest {
-    static fromJson(jsonObject) {
-        if (jsonObject == null) return null
-        const result = new EditGroupPersonsRequest()
-
-        result.personIdsToAdd = []
-        if (jsonObject["personIdsToAdd"] != null)
-            for (const i in jsonObject["personIdsToAdd"])
-                result.personIdsToAdd.push(jsonObject["personIdsToAdd"][i])
-        result.personIdsToRemove = []
-        if (jsonObject["personIdsToRemove"] != null)
-            for (const i in jsonObject["personIdsToRemove"])
-                result.personIdsToRemove.push(jsonObject["personIdsToRemove"][i])
-
-        return result
-    }
-}
-
-class SearchPersonRequest {
-    static fromJson(jsonObject) {
-        if (jsonObject == null) return null
-        const result = new SearchPersonRequest()
-
-        result.groupIdsForSearch = []
-        if (jsonObject["groupIdsForSearch"] != null)
-            for (const i in jsonObject["groupIdsForSearch"])
-                result.groupIdsForSearch.push(jsonObject["groupIdsForSearch"][i])
-        result.threshold = jsonObject["threshold"]
-        result.limit = jsonObject["limit"]
-        result.imageUpload = ImageUpload.fromJson(jsonObject["imageUpload"])
-
-        return result
-    }
-}
-
-class SearchPerson {
-    static fromJson(jsonObject) {
-        if (jsonObject == null) return null
-        const result = new SearchPerson()
-
-        result.images = []
-        if (jsonObject["images"] != null)
-            for (const i in jsonObject["images"])
-                result.images.push(SearchPersonImage.fromJson(jsonObject["images"][i]))
-        result.name = jsonObject["name"]
-        result.updatedAt = jsonObject["updatedAt"]
-        result.id = jsonObject["id"]
-        result.metadata = jsonObject["metadata"]
-        result.createdAt = jsonObject["createdAt"]
-
-        return result
-    }
-}
-
-class SearchPersonImage {
-    static fromJson(jsonObject) {
-        if (jsonObject == null) return null
-        const result = new SearchPersonImage()
-
-        result.similarity = jsonObject["similarity"]
-        result.distance = jsonObject["distance"]
-        result.path = jsonObject["path"]
-        result.url = jsonObject["url"]
-        result.contentType = jsonObject["contentType"]
-        result.id = jsonObject["id"]
-        result.metadata = jsonObject["metadata"]
-        result.createdAt = jsonObject["createdAt"]
-
-        return result
-    }
-}
-
 // Enum
 
 const ImageQualityGroupName = {
@@ -712,14 +584,6 @@ const ImageQualityCharacteristicName = {
     OTHER_FACES: "OtherFaces",
     BACKGROUND_COLOR_MATCH: "BackgroundColorMatch",
     UNKNOWN: "Unknown",
-    IMAGE_CHARACTERISTIC_ALL_RECOMMENDED: "ImageCharacteristic",
-    HEAD_SIZE_AND_POSITION_ALL_RECOMMENDED: "HeadSizeAndPosition",
-    FACE_IMAGE_QUALITY_ALL_RECOMMENDED: "FaceImageQuality",
-    EYES_CHARACTERISTICS_ALL_RECOMMENDED: "EyesCharacteristics",
-    SHADOW_AND_LIGHTING_ALL_RECOMMENDED: "ShadowsAndLightning",
-    POSE_AND_EXPRESSION_ALL_RECOMMENDED: "PoseAndExpression",
-    HEAD_OCCLUSION_ALL_RECOMMENDED: "HeadOcclusion",
-    QUALITY_BACKGROUND_ALL_RECOMMENDED: "QualityBackground",
 }
 
 const DetectFacesScenario = {
@@ -850,77 +714,16 @@ FaceSDK.setServiceUrl = (url, successCallback, errorCallback) => cordova.exec(su
 FaceSDK.matchFaces = (request, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["matchFaces", request])
 FaceSDK.detectFaces = (request, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["detectFaces", request])
 FaceSDK.matchFacesWithConfig = (request, config, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["matchFacesWithConfig", request, config])
-FaceSDK.setOnCustomButtonTappedListener = (successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["setOnCustomButtonTappedListener"])
-FaceSDK.setUiCustomizationLayer = (json, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["setUiCustomizationLayer", json])
 FaceSDK.setLanguage = (language, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["setLanguage", language])
 FaceSDK.matchFacesSimilarityThresholdSplit = (faces, similarity, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["matchFacesSimilarityThresholdSplit", faces, similarity])
-FaceSDK.getPersons = (successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["getPersons"])
-FaceSDK.getPersonsForPage = (page, size, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["getPersonsForPage", page, size])
-FaceSDK.getPerson = (personId, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["getPerson", personId])
-FaceSDK.createPerson = (name, metadata, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["createPerson", name, metadata])
-FaceSDK.updatePerson = (personId, name, metadata, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["updatePerson", personId, name, metadata])
-FaceSDK.deletePerson = (personId, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["deletePerson", personId])
-FaceSDK.getPersonImages = (personId, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["getPersonImages", personId])
-FaceSDK.getPersonImagesForPage = (personId, page, size, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["getPersonImagesForPage", personId, page, size])
-FaceSDK.addPersonImage = (personId, image, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["addPersonImage", personId, image])
-FaceSDK.getPersonImage = (personId, imageId, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["getPersonImage", personId, imageId])
-FaceSDK.deletePersonImage = (personId, imageId, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["deletePersonImage", personId, imageId])
-FaceSDK.getGroups = (successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["getGroups"])
-FaceSDK.getGroupsForPage = (page, size, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["getGroupsForPage", page, size])
-FaceSDK.getPersonGroups = (personId, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["getPersonGroups", personId])
-FaceSDK.getPersonGroupsForPage = (personId, page, size, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["getPersonGroupsForPage", personId, page, size])
-FaceSDK.createGroup = (name, metadata, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["createGroup", name, metadata])
-FaceSDK.getGroup = (groupId, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["getGroup", groupId])
-FaceSDK.updateGroup = (groupId, name, metadata, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["updateGroup", groupId, name, metadata])
-FaceSDK.editPersonsInGroup = (groupId, editGroupPersonsRequest, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["editPersonsInGroup", groupId, editGroupPersonsRequest])
-FaceSDK.getPersonsInGroup = (groupId, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["getPersonsInGroup", groupId])
-FaceSDK.getPersonsInGroupForPage = (groupId, page, size, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["getPersonsInGroupForPage", groupId, page, size])
-FaceSDK.deleteGroup = (groupId, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["deleteGroup", groupId])
-FaceSDK.searchPerson = (searchPersonRequest, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["searchPerson", searchPersonRequest])
 
-FaceSDKPlugin = {}
 
-FaceSDKPlugin.FaceSDK = FaceSDK
-FaceSDKPlugin.Enum = Enum
+FaceSDK.Enum = Enum
+FaceSDK.FaceCaptureResponse = FaceCaptureResponse
+FaceSDK.LivenessResponse = LivenessResponse
+FaceSDK.MatchFacesResponse = MatchFacesResponse
+FaceSDK.MatchFacesRequest = MatchFacesRequest
+FaceSDK.MatchFacesSimilarityThresholdSplit = MatchFacesSimilarityThresholdSplit
+FaceSDK.MatchFacesImage = MatchFacesImage
 
-FaceSDKPlugin.FaceCaptureException = FaceCaptureException
-FaceSDKPlugin.InitException = InitException
-FaceSDKPlugin.LivenessErrorException = LivenessErrorException
-FaceSDKPlugin.LivenessBackendException = LivenessBackendException
-FaceSDKPlugin.MatchFacesException = MatchFacesException
-FaceSDKPlugin.FaceCaptureResponse = FaceCaptureResponse
-FaceSDKPlugin.LivenessResponse = LivenessResponse
-FaceSDKPlugin.MatchFacesResponse = MatchFacesResponse
-FaceSDKPlugin.Image = Image
-FaceSDKPlugin.MatchFacesRequest = MatchFacesRequest
-FaceSDKPlugin.MatchFacesImage = MatchFacesImage
-FaceSDKPlugin.MatchFacesComparedFacesPair = MatchFacesComparedFacesPair
-FaceSDKPlugin.MatchFacesComparedFace = MatchFacesComparedFace
-FaceSDKPlugin.MatchFacesDetectionFace = MatchFacesDetectionFace
-FaceSDKPlugin.MatchFacesDetection = MatchFacesDetection
-FaceSDKPlugin.Point = Point
-FaceSDKPlugin.Rect = Rect
-FaceSDKPlugin.MatchFacesSimilarityThresholdSplit = MatchFacesSimilarityThresholdSplit
-FaceSDKPlugin.DetectFacesRequest = DetectFacesRequest
-FaceSDKPlugin.DetectFacesConfiguration = DetectFacesConfiguration
-FaceSDKPlugin.OutputImageParams = OutputImageParams
-FaceSDKPlugin.OutputImageCrop = OutputImageCrop
-FaceSDKPlugin.ImageQualityCharacteristic = ImageQualityCharacteristic
-FaceSDKPlugin.ImageQualityRange = ImageQualityRange
-FaceSDKPlugin.Size = Size
-FaceSDKPlugin.DetectFacesResponse = DetectFacesResponse
-FaceSDKPlugin.DetectFacesErrorException = DetectFacesErrorException
-FaceSDKPlugin.DetectFacesBackendException = DetectFacesBackendException
-FaceSDKPlugin.DetectFaceResult = DetectFaceResult
-FaceSDKPlugin.ImageQualityResult = ImageQualityResult
-FaceSDKPlugin.DetectFacesAttributeResult = DetectFacesAttributeResult
-FaceSDKPlugin.Person = Person
-FaceSDKPlugin.PersonGroup = PersonGroup
-FaceSDKPlugin.PersonImage = PersonImage
-FaceSDKPlugin.ImageUpload = ImageUpload
-FaceSDKPlugin.EditGroupPersonsRequest = EditGroupPersonsRequest
-FaceSDKPlugin.SearchPersonRequest = SearchPersonRequest
-FaceSDKPlugin.SearchPerson = SearchPerson
-FaceSDKPlugin.SearchPersonImage = SearchPersonImage
-
-module.exports = FaceSDKPlugin
+module.exports = FaceSDK
