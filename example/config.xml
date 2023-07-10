@@ -17,6 +17,11 @@
     <allow-intent href="mailto:*" />
     <allow-intent href="geo:*" />
     <platform name="android">
+        <preference name="GradlePluginKotlinEnabled" value="true" />
+        <preference name="GradlePluginKotlinCodeStyle" value="official" />
+        <preference name="GradlePluginKotlinVersion" value="1.7.10" />
+        <preference name="android-minSdkVersion" value="23" />
+        <preference name="android-targetSdkVersion" value="33" />
         <preference name="AndroidXEnabled" value="true" />
         <allow-intent href="market:*" />
         <config-file parent="/manifest/application" target="AndroidManifest.xml">

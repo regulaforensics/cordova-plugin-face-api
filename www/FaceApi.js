@@ -83,6 +83,7 @@ class LivenessResponse {
         result.liveness = jsonObject["liveness"]
         result.tag = jsonObject["tag"]
         result.transactionId = jsonObject["transactionId"]
+        result.estimatedAge = jsonObject["estimatedAge"]
         result.exception = LivenessErrorException.fromJson(jsonObject["exception"])
 
         return result
@@ -457,12 +458,29 @@ class DetectFacesAttributeResult {
     }
 }
 
+class Font {
+    static fromJson(jsonObject) {
+        if (jsonObject == null) return null
+        const result = new Font()
+
+        result.name = jsonObject["name"]
+        result.style = jsonObject["style"]
+        result.size = jsonObject["size"]
+
+        return result
+    }
+}
+
 class Person {
     static fromJson(jsonObject) {
         if (jsonObject == null) return null
         const result = new Person()
 
         result.name = jsonObject["name"]
+        result.groups = []
+        if (jsonObject["groups"] != null)
+            for (const i in jsonObject["groups"])
+                result.groups.push(jsonObject["groups"][i])
         result.updatedAt = jsonObject["updatedAt"]
         result.id = jsonObject["id"]
         result.metadata = jsonObject["metadata"]
@@ -536,6 +554,7 @@ class SearchPersonRequest {
         if (jsonObject == null) return null
         const result = new SearchPersonRequest()
 
+        result.outputImageParams = OutputImageParams.fromJson(jsonObject["outputImageParams"])
         result.groupIdsForSearch = []
         if (jsonObject["groupIdsForSearch"] != null)
             for (const i in jsonObject["groupIdsForSearch"])
@@ -543,6 +562,7 @@ class SearchPersonRequest {
         result.threshold = jsonObject["threshold"]
         result.limit = jsonObject["limit"]
         result.imageUpload = ImageUpload.fromJson(jsonObject["imageUpload"])
+        result.detectAll = jsonObject["detectAll"]
 
         return result
     }
@@ -553,11 +573,16 @@ class SearchPerson {
         if (jsonObject == null) return null
         const result = new SearchPerson()
 
+        result.detection = SearchPersonDetection.fromJson(jsonObject["detection"])
         result.images = []
         if (jsonObject["images"] != null)
             for (const i in jsonObject["images"])
                 result.images.push(SearchPersonImage.fromJson(jsonObject["images"][i]))
         result.name = jsonObject["name"]
+        result.groups = []
+        if (jsonObject["groups"] != null)
+            for (const i in jsonObject["groups"])
+                result.groups.push(jsonObject["groups"][i])
         result.updatedAt = jsonObject["updatedAt"]
         result.id = jsonObject["id"]
         result.metadata = jsonObject["metadata"]
@@ -585,7 +610,82 @@ class SearchPersonImage {
     }
 }
 
+class SearchPersonDetection {
+    static fromJson(jsonObject) {
+        if (jsonObject == null) return null
+        const result = new SearchPersonDetection()
+
+        result.landmarks = []
+        if (jsonObject["landmarks"] != null)
+            for (const i in jsonObject["landmarks"])
+                result.landmarks.push(Point.fromJson(jsonObject["landmarks"][i]))
+        result.rect = Rect.fromJson(jsonObject["rect"])
+        result.cropImage = jsonObject["cropImage"]
+        result.rotationAngle = jsonObject["rotationAngle"]
+
+        return result
+    }
+}
+
+class LivenessNotification {
+    static fromJson(jsonObject) {
+        if (jsonObject == null) return null
+        const result = new LivenessNotification()
+
+        result.status = jsonObject["status"]
+        result.response = LivenessResponse.fromJson(jsonObject["response"])
+
+        return result
+    }
+}
+
+class VideoEncoderCompletion {
+    static fromJson(jsonObject) {
+        if (jsonObject == null) return null
+        const result = new VideoEncoderCompletion()
+
+        result.success = jsonObject["success"]
+        result.transactionId = jsonObject["transactionId"]
+
+        return result
+    }
+}
+
 // Enum
+
+const FontStyle = {
+    NORMAL: 0,
+    BOLD: 1,
+    ITALIC: 2,
+    BOLD_ITALIC: 3,
+}
+
+const CustomizationColor = {
+    ONBOARDING_SCREEN_START_BUTTON_BACKGROUND: "CustomizationColor.ONBOARDING_SCREEN_START_BUTTON_BACKGROUND",
+    ONBOARDING_SCREEN_START_BUTTON_TITLE: "CustomizationColor.ONBOARDING_SCREEN_START_BUTTON_TITLE",
+    ONBOARDING_SCREEN_BACKGROUND: "CustomizationColor.ONBOARDING_SCREEN_BACKGROUND",
+    ONBOARDING_SCREEN_TITLE_LABEL_TEXT: "CustomizationColor.ONBOARDING_SCREEN_TITLE_LABEL_TEXT",
+    ONBOARDING_SCREEN_MESSAGE_LABEL_TEXT: "CustomizationColor.ONBOARDING_SCREEN_MESSAGE_LABEL_TEXT",
+    CAMERA_SCREEN_STROKE_NORMAL: "CustomizationColor.CAMERA_SCREEN_STROKE_NORMAL",
+    CAMERA_SCREEN_STROKE_ACTIVE: "CustomizationColor.CAMERA_SCREEN_STROKE_ACTIVE",
+    CAMERA_SCREEN_SECTOR_TARGET: "CustomizationColor.CAMERA_SCREEN_SECTOR_TARGET",
+    CAMERA_SCREEN_SECTOR_ACTIVE: "CustomizationColor.CAMERA_SCREEN_SECTOR_ACTIVE",
+    CAMERA_SCREEN_FRONT_HINT_LABEL_BACKGROUND: "CustomizationColor.CAMERA_SCREEN_FRONT_HINT_LABEL_BACKGROUND",
+    CAMERA_SCREEN_FRONT_HINT_LABEL_TEXT: "CustomizationColor.CAMERA_SCREEN_FRONT_HINT_LABEL_TEXT",
+    CAMERA_SCREEN_BACK_HINT_LABEL_BACKGROUND: "CustomizationColor.CAMERA_SCREEN_BACK_HINT_LABEL_BACKGROUND",
+    CAMERA_SCREEN_BACK_HINT_LABEL_TEXT: "CustomizationColor.CAMERA_SCREEN_BACK_HINT_LABEL_TEXT",
+    CAMERA_SCREEN_LIGHT_TOOLBAR_TINT: "CustomizationColor.CAMERA_SCREEN_LIGHT_TOOLBAR_TINT",
+    CAMERA_SCREEN_DARK_TOOLBAR_TINT: "CustomizationColor.CAMERA_SCREEN_DARK_TOOLBAR_TINT",
+    RETRY_SCREEN_BACKGROUND: "CustomizationColor.RETRY_SCREEN_BACKGROUND",
+    RETRY_SCREEN_RETRY_BUTTON_BACKGROUND: "CustomizationColor.RETRY_SCREEN_RETRY_BUTTON_BACKGROUND",
+    RETRY_SCREEN_RETRY_BUTTON_TITLE: "CustomizationColor.RETRY_SCREEN_RETRY_BUTTON_TITLE",
+    RETRY_SCREEN_TITLE_LABEL_TEXT: "CustomizationColor.RETRY_SCREEN_TITLE_LABEL_TEXT",
+    RETRY_SCREEN_HINT_LABELS_TEXT: "CustomizationColor.RETRY_SCREEN_HINT_LABELS_TEXT",
+    PROCESSING_SCREEN_BACKGROUND: "CustomizationColor.PROCESSING_SCREEN_BACKGROUND",
+    PROCESSING_SCREEN_PROGRESS: "CustomizationColor.PROCESSING_SCREEN_PROGRESS",
+    PROCESSING_SCREEN_TITLE: "CustomizationColor.PROCESSING_SCREEN_TITLE",
+    SUCCESS_SCREEN_BACKGROUND: "CustomizationColor.SUCCESS_SCREEN_BACKGROUND",
+}
 
 const ImageQualityGroupName = {
     IMAGE_CHARACTERISTICS: 1,
@@ -641,6 +741,7 @@ const LivenessErrorCode = {
     CAMERA_NO_PERMISSION: "CAMERA_NO_PERMISSION",
     CAMERA_NOT_AVAILABLE: "CAMERA_NOT_AVAILABLE",
     PROCESSING_FRAME_FAILED: "PROCESSING_FRAME_FAILED",
+    SESSION_START_FAILED: "SESSION_START_FAILED",
 }
 
 const DetectFacesBackendErrorCode = {
@@ -669,6 +770,7 @@ const ImageQualityCharacteristicName = {
     IMAGE_HEIGHT: "ImageHeight",
     IMAGE_WIDTH_TO_HEIGHT: "ImageWidthToHeight",
     IMAGE_CHANNELS_NUMBER: "ImageChannelsNumber",
+    ART_FACE: "ArtFace",
     PADDING_RATIO: "PaddingRatio",
     FACE_MID_POINT_HORIZONTAL_POSITION: "FaceMidPointHorizontalPosition",
     FACE_MID_POINT_VERTICAL_POSITION: "FaceMidPointVerticalPosition",
@@ -722,6 +824,23 @@ const ImageQualityCharacteristicName = {
     QUALITY_BACKGROUND_ALL_RECOMMENDED: "QualityBackground",
 }
 
+const ButtonTag = {
+    CLOSE: 1001,
+    TORCH: 1002,
+    CAMERA_SWITCH: 1003,
+}
+
+const CustomizationFont = {
+    ONBOARDING_SCREEN_START_BUTTON: "CustomizationFont.ONBOARDING_SCREEN_START_BUTTON",
+    ONBOARDING_SCREEN_TITLE_LABEL: "CustomizationFont.ONBOARDING_SCREEN_TITLE_LABEL",
+    ONBOARDING_SCREEN_MESSAGE_LABEL: "CustomizationFont.ONBOARDING_SCREEN_MESSAGE_LABEL",
+    CAMERA_SCREEN_HINT_LABEL: "CustomizationFont.CAMERA_SCREEN_HINT_LABEL",
+    RETRY_SCREEN_RETRY_BUTTON: "CustomizationFont.RETRY_SCREEN_RETRY_BUTTON",
+    RETRY_SCREEN_TITLE_LABEL: "CustomizationFont.RETRY_SCREEN_TITLE_LABEL",
+    RETRY_SCREEN_HINT_LABELS: "CustomizationFont.RETRY_SCREEN_HINT_LABELS",
+    PROCESSING_SCREEN: "CustomizationFont.PROCESSING_SCREEN",
+}
+
 const DetectFacesScenario = {
     CROP_CENTRAL_FACE: "CropCentralFace",
     CROP_ALL_FACES: "CropAllFaces",
@@ -733,6 +852,24 @@ const DetectFacesScenario = {
     QUALITY_VISA_USA: "QualityVisaUSA",
 }
 
+const LivenessProcessStatus = {
+    START: "START",
+    PREPARING: "PREPARING",
+    NEW_SESSION: "NEW_SESSION",
+    NEXT_STAGE: "NEXT_STAGE",
+    SECTOR_CHANGED: "SECTOR_CHANGED",
+    PROGRESS: "PROGRESS",
+    LOW_BRIGHTNESS: "LOW_BRIGHTNESS",
+    FIT_FACE: "FIT_FACE",
+    MOVE_AWAY: "MOVE_AWAY",
+    MOVE_CLOSER: "MOVE_CLOSER",
+    TURN_HEAD: "TURN_HEAD",
+    PROCESSING: "PROCESSING",
+    FAILED: "FAILED",
+    RETRY: "RETRY",
+    SUCCESS: "SUCCESS",
+}
+
 const OutputImageCropAspectRatio = {
     OUTPUT_IMAGE_CROP_ASPECT_RATIO_3X4: 0,
     OUTPUT_IMAGE_CROP_ASPECT_RATIO_4X5: 1,
@@ -742,9 +879,8 @@ const OutputImageCropAspectRatio = {
 }
 
 const LivenessSkipStep = {
-    NONE: 0,
-    START_STEP: 1,
-    DONE_STEP: 2,
+    ONBOARDING_STEP: 1,
+    SUCCESS_STEP: 2,
 }
 
 const ImageQualityResultStatus = {
@@ -770,6 +906,7 @@ const FaceCaptureErrorCode = {
     CONTEXT_IS_NULL: "CONTEXT_IS_NULL",
     TIMEOUT: "TIMEOUT",
     NOT_INITIALIZED: "NOT_INITIALIZED",
+    SESSION_START_FAILED: "SESSION_START_FAILED",
 }
 
 const LivenessBackendErrorCode = {
@@ -796,6 +933,22 @@ const LivenessBackendErrorCode = {
     WRONG_VIEW: 249,
 }
 
+const CustomizationImage = {
+    ONBOARDING_SCREEN_CLOSE_BUTTON: "CustomizationImage.ONBOARDING_SCREEN_CLOSE_BUTTON",
+    ONBOARDING_SCREEN_ILLUMINATION: "CustomizationImage.ONBOARDING_SCREEN_ILLUMINATION",
+    ONBOARDING_SCREEN_ACCESSORIES: "CustomizationImage.ONBOARDING_SCREEN_ACCESSORIES",
+    ONBOARDING_SCREEN_CAMERA_LEVEL: "CustomizationImage.ONBOARDING_SCREEN_CAMERA_LEVEL",
+    CAMERA_SCREEN_CLOSE_BUTTON: "CustomizationImage.CAMERA_SCREEN_CLOSE_BUTTON",
+    CAMERA_SCREEN_LIGHT_ON_BUTTON: "CustomizationImage.CAMERA_SCREEN_LIGHT_ON_BUTTON",
+    CAMERA_SCREEN_LIGHT_OFF_BUTTON: "CustomizationImage.CAMERA_SCREEN_LIGHT_OFF_BUTTON",
+    CAMERA_SCREEN_SWITCH_BUTTON: "CustomizationImage.CAMERA_SCREEN_SWITCH_BUTTON",
+    RETRY_SCREEN_CLOSE_BUTTON: "CustomizationImage.RETRY_SCREEN_CLOSE_BUTTON",
+    RETRY_SCREEN_HINT_ENVIRONMENT: "CustomizationImage.RETRY_SCREEN_HINT_ENVIRONMENT",
+    RETRY_SCREEN_HINT_SUBJECT: "CustomizationImage.RETRY_SCREEN_HINT_SUBJECT",
+    PROCESSING_SCREEN_CLOSE_BUTTON: "CustomizationImage.PROCESSING_SCREEN_CLOSE_BUTTON",
+    SUCCESS_SCREEN_IMAGE: "CustomizationImage.SUCCESS_SCREEN_IMAGE",
+}
+
 const DetectFacesAttribute = {
     AGE: "Age",
     EYE_RIGHT: "EyeRight",
@@ -813,6 +966,8 @@ const DetectFacesAttribute = {
 }
 
 const Enum = {
+   FontStyle,
+   CustomizationColor,
    ImageQualityGroupName,
    DetectFacesErrorCode,
    InitErrorCode,
@@ -822,13 +977,17 @@ const Enum = {
    DetectFacesBackendErrorCode,
    MatchFacesErrorCode,
    ImageQualityCharacteristicName,
+   ButtonTag,
+   CustomizationFont,
    DetectFacesScenario,
+   LivenessProcessStatus,
    OutputImageCropAspectRatio,
    LivenessSkipStep,
    ImageQualityResultStatus,
    ImageType,
    FaceCaptureErrorCode,
    LivenessBackendErrorCode,
+   CustomizationImage,
    DetectFacesAttribute,
 }
 
@@ -849,16 +1008,14 @@ FaceSDK.startLivenessWithConfig = (config, successCallback, errorCallback) => co
 FaceSDK.setServiceUrl = (url, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["setServiceUrl", url])
 FaceSDK.matchFaces = (request, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["matchFaces", request])
 FaceSDK.detectFaces = (request, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["detectFaces", request])
-FaceSDK.matchFacesWithConfig = (request, config, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["matchFacesWithConfig", request, config])
 FaceSDK.setOnCustomButtonTappedListener = (successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["setOnCustomButtonTappedListener"])
 FaceSDK.setUiCustomizationLayer = (json, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["setUiCustomizationLayer", json])
+FaceSDK.setUiConfiguration = (config, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["setUiConfiguration", config])
 FaceSDK.setLanguage = (language, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["setLanguage", language])
 FaceSDK.matchFacesSimilarityThresholdSplit = (faces, similarity, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["matchFacesSimilarityThresholdSplit", faces, similarity])
-FaceSDK.getPersons = (successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["getPersons"])
-FaceSDK.getPersonsForPage = (page, size, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["getPersonsForPage", page, size])
 FaceSDK.getPerson = (personId, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["getPerson", personId])
-FaceSDK.createPerson = (name, metadata, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["createPerson", name, metadata])
-FaceSDK.updatePerson = (personId, name, metadata, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["updatePerson", personId, name, metadata])
+FaceSDK.createPerson = (name, groupIds, metadata, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["createPerson", name, groupIds, metadata])
+FaceSDK.updatePerson = (person, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["updatePerson", person])
 FaceSDK.deletePerson = (personId, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["deletePerson", personId])
 FaceSDK.getPersonImages = (personId, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["getPersonImages", personId])
 FaceSDK.getPersonImagesForPage = (personId, page, size, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["getPersonImagesForPage", personId, page, size])
@@ -871,7 +1028,7 @@ FaceSDK.getPersonGroups = (personId, successCallback, errorCallback) => cordova.
 FaceSDK.getPersonGroupsForPage = (personId, page, size, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["getPersonGroupsForPage", personId, page, size])
 FaceSDK.createGroup = (name, metadata, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["createGroup", name, metadata])
 FaceSDK.getGroup = (groupId, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["getGroup", groupId])
-FaceSDK.updateGroup = (groupId, name, metadata, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["updateGroup", groupId, name, metadata])
+FaceSDK.updateGroup = (group, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["updateGroup", group])
 FaceSDK.editPersonsInGroup = (groupId, editGroupPersonsRequest, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["editPersonsInGroup", groupId, editGroupPersonsRequest])
 FaceSDK.getPersonsInGroup = (groupId, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["getPersonsInGroup", groupId])
 FaceSDK.getPersonsInGroupForPage = (groupId, page, size, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["getPersonsInGroupForPage", groupId, page, size])
@@ -914,6 +1071,7 @@ FaceSDKPlugin.DetectFacesBackendException = DetectFacesBackendException
 FaceSDKPlugin.DetectFaceResult = DetectFaceResult
 FaceSDKPlugin.ImageQualityResult = ImageQualityResult
 FaceSDKPlugin.DetectFacesAttributeResult = DetectFacesAttributeResult
+FaceSDKPlugin.Font = Font
 FaceSDKPlugin.Person = Person
 FaceSDKPlugin.PersonGroup = PersonGroup
 FaceSDKPlugin.PersonImage = PersonImage
@@ -922,5 +1080,8 @@ FaceSDKPlugin.EditGroupPersonsRequest = EditGroupPersonsRequest
 FaceSDKPlugin.SearchPersonRequest = SearchPersonRequest
 FaceSDKPlugin.SearchPerson = SearchPerson
 FaceSDKPlugin.SearchPersonImage = SearchPersonImage
+FaceSDKPlugin.SearchPersonDetection = SearchPersonDetection
+FaceSDKPlugin.LivenessNotification = LivenessNotification
+FaceSDKPlugin.VideoEncoderCompletion = VideoEncoderCompletion
 
 module.exports = FaceSDKPlugin

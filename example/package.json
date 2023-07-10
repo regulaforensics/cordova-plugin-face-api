@@ -16,8 +16,8 @@
     "cordova-android": "^10.1.1",
     "cordova-ios": "^6.2.0",
     "cordova-plugin-add-swift-support": "^2.0.2",
-    "@regulaforensics/cordova-plugin-face-api-beta": "0.0.74",
-    "@regulaforensics/cordova-plugin-face-core": "5.1.1",
+    "@regulaforensics/cordova-plugin-face-api-beta": "0.0.75",
+    "@regulaforensics/cordova-plugin-face-core-beta": "0.0.6",
     "cordova-plugin-file": "^6.0.2",
     "cordova-plugin-telerik-imagepicker": "^2.3.5",
     "cordova-plugin-android-permissions": "1.1.0",
@@ -30,7 +30,7 @@
         "CAMERA_USAGE_DESCRIPTION": "To take photo",
         "READ_EXTERNAL_STORAGE": "To choose photo"
       },
-      "@regulaforensics/cordova-plugin-face-core": {},
+      "@regulaforensics/cordova-plugin-face-core-beta": {},
       "cordova-plugin-file": {},
       "cordova-plugin-telerik-imagepicker": {
         "PHOTO_LIBRARY_USAGE_DESCRIPTION": " "

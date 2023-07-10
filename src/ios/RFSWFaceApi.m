@@ -23,8 +23,12 @@ static CDVInvokedUrlCommand* _command;
     // VideoEncoderCompletion does not work in cordova
 }
 
-- (void)onCustomButtonTappedWithTag:(NSInteger)tag {
+- (void)onFaceCustomButtonTappedWithTag:(NSInteger)tag {
     [RFSWPlugin sendEvent:[NSString stringWithFormat:@"%ld", tag] :RFSWFaceApi.command.callbackId];
+}
+
+- (void)processStatusChanged:(RFSLivenessProcessStatus)status result:(RFSLivenessResponse*)result {
+    // LivenessNotification does not work in cordova
 }
 
 - (void) exec:(CDVInvokedUrlCommand*)command {
@@ -71,26 +75,22 @@ static CDVInvokedUrlCommand* _command;
         [self matchFaces :[args objectAtIndex:0] :successCallback :errorCallback];
     else if([action isEqualToString:@"detectFaces"])
         [self detectFaces :[args objectAtIndex:0] :successCallback :errorCallback];
-    else if([action isEqualToString:@"matchFacesWithConfig"])
-        [self matchFacesWithConfig :[args objectAtIndex:0] :[args objectAtIndex:1] :successCallback :errorCallback];
     else if([action isEqualToString:@"setOnCustomButtonTappedListener"])
         [self setOnCustomButtonTappedListener :successCallback :errorCallback];
     else if([action isEqualToString:@"setUiCustomizationLayer"])
         [self setUiCustomizationLayer :[args objectAtIndex:0] :successCallback :errorCallback];
+    else if([action isEqualToString:@"setUiConfiguration"])
+        [self setUiConfiguration :[args objectAtIndex:0] :successCallback :errorCallback];
     else if([action isEqualToString:@"setLanguage"])
         [self setLanguage :[args objectAtIndex:0] :successCallback :errorCallback];
     else if([action isEqualToString:@"matchFacesSimilarityThresholdSplit"])
         [self matchFacesSimilarityThresholdSplit :[args objectAtIndex:0] :[args objectAtIndex:1] :successCallback :errorCallback];
-    else if([action isEqualToString:@"getPersons"])
-        [self getPersons :successCallback :errorCallback];
-    else if([action isEqualToString:@"getPersonsForPage"])
-        [self getPersonsForPage :[args objectAtIndex:0] :[args objectAtIndex:1] :successCallback :errorCallback];
     else if([action isEqualToString:@"getPerson"])
         [self getPerson :[args objectAtIndex:0] :successCallback :errorCallback];
     else if([action isEqualToString:@"createPerson"])
-        [self createPerson :[args objectAtIndex:0] :[args objectAtIndex:1] :successCallback :errorCallback];
+        [self createPerson :[args objectAtIndex:0] :[args objectAtIndex:1] :[args objectAtIndex:2] :successCallback :errorCallback];
     else if([action isEqualToString:@"updatePerson"])
-        [self updatePerson :[args objectAtIndex:0] :[args objectAtIndex:1] :[args objectAtIndex:2] :successCallback :errorCallback];
+        [self updatePerson :[args objectAtIndex:0] :successCallback :errorCallback];
     else if([action isEqualToString:@"deletePerson"])
         [self deletePerson :[args objectAtIndex:0] :successCallback :errorCallback];
     else if([action isEqualToString:@"getPersonImages"])
@@ -116,7 +116,7 @@ static CDVInvokedUrlCommand* _command;
     else if([action isEqualToString:@"getGroup"])
         [self getGroup :[args objectAtIndex:0] :successCallback :errorCallback];
     else if([action isEqualToString:@"updateGroup"])
-        [self updateGroup :[args objectAtIndex:0] :[args objectAtIndex:1] :[args objectAtIndex:2] :successCallback :errorCallback];
+        [self updateGroup :[args objectAtIndex:0] :successCallback :errorCallback];
     else if([action isEqualToString:@"editPersonsInGroup"])
         [self editPersonsInGroup :[args objectAtIndex:0] :[args objectAtIndex:1] :successCallback :errorCallback];
     else if([action isEqualToString:@"getPersonsInGroup"])
@@ -153,8 +153,10 @@ static CDVInvokedUrlCommand* _command;
 
 - (void) init:(RFSWCallback)successCallback :(RFSWCallback)errorCallback{
     [RFSFaceSDK.service initializeWithCompletion:^(BOOL success, NSError * _Nullable error) {
-        if(success)
+        if(success){
             [RFSFaceSDK.service setVideoUploadingDelegate:self];
+            [RFSFaceSDK.service setProcessStatusDelegate:self];
+        }
         [self result:[RFSWJSONConstructor dictToString:[RFSWJSONConstructor generateInitCompletion:success :error]] :successCallback];
     }];
 }
@@ -175,6 +177,11 @@ static CDVInvokedUrlCommand* _command;
 
 - (void) setUiCustomizationLayer:(NSDictionary*)json :(RFSWCallback)successCallback :(RFSWCallback)errorCallback{
     RFSFaceSDK.service.customization.customUILayerJSON = json;
+    [self result:@"" :successCallback];
+}
+
+- (void) setUiConfiguration:(NSDictionary*)config :(RFSWCallback)successCallback :(RFSWCallback)errorCallback{
+    RFSFaceSDK.service.customization.configuration = [RFSWJSONConstructor RFSUIConfigurationFromJSON:config];
     [self result:@"" :successCallback];
 }
 
@@ -326,27 +333,6 @@ static CDVInvokedUrlCommand* _command;
     return RFSLivenessStepSkipNone;
 }
 
--(unsigned int)intFromHexString:(NSString *)hexStr {
-    unsigned int hexInt = 0;
-    NSScanner *scanner = [NSScanner scannerWithString:hexStr];
-    [scanner setCharactersToBeSkipped:[NSCharacterSet characterSetWithCharactersInString:@"#"]];
-    [scanner scanHexInt:&hexInt];
-
-    return hexInt;
-}
-
--(UIColor *)getUIColorObjectFromHexString:(NSString *)hexStr alpha:(CGFloat)alpha {
-    unsigned int hexInt = [self intFromHexString:hexStr];
-
-    UIColor *color =
-    [UIColor colorWithRed:((CGFloat) ((hexInt & 0xFF0000) >> 16))/255
-                    green:((CGFloat) ((hexInt & 0xFF00) >> 8))/255
-                     blue:((CGFloat) (hexInt & 0xFF))/255
-                    alpha:alpha];
-
-    return color;
-}
-
 - (NSURLRequest*)interceptorPrepareRequest:(NSURLRequest*)request {
     NSMutableURLRequest *interceptedRequest = [request mutableCopy];
     for(NSString* key in self.headers.allKeys)
@@ -354,35 +340,8 @@ static CDVInvokedUrlCommand* _command;
     return interceptedRequest;
 }
 
-- (void) getPersons:(RFSWCallback)successCallback :(RFSWCallback)errorCallback{
-    [RFSFaceSDK.service.personDatabase getPersons:^(RFSPageResponse<RFSPerson *> * response) {
-        if(response.error != nil)
-            [self result:[RFSWJSONConstructor dictToString:[RFSWJSONConstructor generateRFSPagePersonResponse:response]] :successCallback];
-        else
-            [self result:[RFSWJSONConstructor generateNSError:response.error] :errorCallback];
-    }];
-}
-
-- (void) getPersonsForPage:(NSNumber*)page :(NSNumber*)size :(RFSWCallback)successCallback :(RFSWCallback)errorCallback{
-    [RFSFaceSDK.service.personDatabase getPersonsForPage:[page integerValue] size:[size integerValue] completion:^(RFSPageResponse<RFSPerson *> * response) {
-        if(response.error != nil)
-            [self result:[RFSWJSONConstructor dictToString:[RFSWJSONConstructor generateRFSPagePersonResponse:response]] :successCallback];
-        else
-            [self result:[RFSWJSONConstructor generateNSError:response.error] :errorCallback];
-    }];
-}
-
-- (void) getPerson:(NSNumber*)personId :(RFSWCallback)successCallback :(RFSWCallback)errorCallback{
-    [RFSFaceSDK.service.personDatabase getPersonByPersonId:[personId integerValue] completion:^(RFSItemResponse<RFSPerson *> * response) {
-        if(response.error != nil)
-            [self result:[RFSWJSONConstructor dictToString:[RFSWJSONConstructor generateRFSPerson:response.item]] :successCallback];
-        else
-            [self result:[RFSWJSONConstructor generateNSError:response.error] :errorCallback];
-    }];
-}
-
-- (void) createPerson:(NSString*)name :(NSDictionary*)metadata :(RFSWCallback)successCallback :(RFSWCallback)errorCallback{
-    [RFSFaceSDK.service.personDatabase createPersonWithName:name metadata:metadata completion:^(RFSItemResponse<RFSPerson *> * response) {
+- (void) getPerson:(NSString*)personId :(RFSWCallback)successCallback :(RFSWCallback)errorCallback{
+    [RFSFaceSDK.service.personDatabase getPersonByPersonId:personId completion:^(RFSItemResponse<RFSPerson *> * response) {
         if(response.error == nil)
             [self result:[RFSWJSONConstructor dictToString:[RFSWJSONConstructor generateRFSPerson:response.item]] :successCallback];
         else
@@ -390,8 +349,34 @@ static CDVInvokedUrlCommand* _command;
     }];
 }
 
-- (void) updatePerson:(NSNumber*)personId :(NSString*)name :(NSDictionary*)metadata :(RFSWCallback)successCallback :(RFSWCallback)errorCallback{
-    [RFSFaceSDK.service.personDatabase updatePersonByPersonId:[personId integerValue] name:name metadata:metadata completion:^(RFSComfirmResponse * success) {
+- (void) createPerson:(NSString*)name :(NSDictionary*)metadata :(NSArray<NSString*>*)groupIds :(RFSWCallback)successCallback :(RFSWCallback)errorCallback{
+    [RFSFaceSDK.service.personDatabase createPersonWithName:name metadata:metadata groupIds:groupIds completion:^(RFSItemResponse<RFSPerson *> * response) {
+        if(response.error == nil)
+            [self result:[RFSWJSONConstructor dictToString:[RFSWJSONConstructor generateRFSPerson:response.item]] :successCallback];
+        else
+            [self result:[RFSWJSONConstructor generateNSError:response.error] :errorCallback];
+    }];
+}
+
+- (void) updatePerson:(NSDictionary*)person :(RFSWCallback)successCallback :(RFSWCallback)errorCallback{
+    [RFSFaceSDK.service.personDatabase getPersonByPersonId:[RFSWJSONConstructor idFromJSON:person] completion:^(RFSItemResponse<RFSPerson *> * response) {
+        if(response.error == nil) {
+            if(response.item != nil) {
+                [RFSFaceSDK.service.personDatabase updatePerson:[RFSWJSONConstructor updatePersonFromJSON:response.item :person] completion:^(RFSComfirmResponse * success) {
+                    if(success)
+                        [self result:@"" :successCallback];
+                    else
+                        [self result:@"" :errorCallback];
+                }];
+            } else
+                [self result:@"id does not exist" :errorCallback];
+        } else
+            [self result:[RFSWJSONConstructor generateNSError:response.error] :errorCallback];
+    }];
+}
+
+- (void) deletePerson:(NSString*)personId :(RFSWCallback)successCallback :(RFSWCallback)errorCallback{
+    [RFSFaceSDK.service.personDatabase deletePersonByPersonId:personId completion:^(RFSComfirmResponse * success) {
         if(success)
             [self result:@"" :successCallback];
         else
@@ -399,54 +384,45 @@ static CDVInvokedUrlCommand* _command;
     }];
 }
 
-- (void) deletePerson:(NSNumber*)personId :(RFSWCallback)successCallback :(RFSWCallback)errorCallback{
-    [RFSFaceSDK.service.personDatabase deletePersonByPersonId:[personId integerValue] completion:^(RFSComfirmResponse * success) {
-        if(success)
-            [self result:@"" :successCallback];
-        else
-            [self result:@"" :errorCallback];
-    }];
-}
-
-- (void) getPersonImages:(NSNumber*)personId :(RFSWCallback)successCallback :(RFSWCallback)errorCallback{
-    [RFSFaceSDK.service.personDatabase getPersonImagesByPersonId:[personId integerValue] completion:^(RFSPageResponse<RFSPersonImage *> * response) {
-        if(response.error != nil)
+- (void) getPersonImages:(NSString*)personId :(RFSWCallback)successCallback :(RFSWCallback)errorCallback{
+    [RFSFaceSDK.service.personDatabase getPersonImagesByPersonId:personId completion:^(RFSPageResponse<RFSPersonImage *> * response) {
+        if(response.error == nil)
             [self result:[RFSWJSONConstructor dictToString:[RFSWJSONConstructor generateRFSPagePersonImageResponse:response]] :successCallback];
         else
             [self result:[RFSWJSONConstructor generateNSError:response.error] :errorCallback];
     }];
 }
 
-- (void) getPersonImagesForPage:(NSNumber*)personId :(NSNumber*)page :(NSNumber*)size :(RFSWCallback)successCallback :(RFSWCallback)errorCallback{
-    [RFSFaceSDK.service.personDatabase getPersonImagesByPersonId:[personId integerValue] page:[page integerValue] size:[size integerValue] completion:^(RFSPageResponse<RFSPersonImage *> * response) {
-        if(response.error != nil)
+- (void) getPersonImagesForPage:(NSString*)personId :(NSNumber*)page :(NSNumber*)size :(RFSWCallback)successCallback :(RFSWCallback)errorCallback{
+    [RFSFaceSDK.service.personDatabase getPersonImagesByPersonId:personId page:[page integerValue] size:[size integerValue] completion:^(RFSPageResponse<RFSPersonImage *> * response) {
+        if(response.error == nil)
             [self result:[RFSWJSONConstructor dictToString:[RFSWJSONConstructor generateRFSPagePersonImageResponse:response]] :successCallback];
         else
             [self result:[RFSWJSONConstructor generateNSError:response.error] :errorCallback];
     }];
 }
 
-- (void) addPersonImage:(NSNumber*)personId :(NSDictionary*)image :(RFSWCallback)successCallback :(RFSWCallback)errorCallback{
+- (void) addPersonImage:(NSString*)personId :(NSDictionary*)image :(RFSWCallback)successCallback :(RFSWCallback)errorCallback{
     RFSImageUpload *imageUpload = [RFSWJSONConstructor RFSImageUploadFromJSON:image];
-    [RFSFaceSDK.service.personDatabase addPersonImageByPersonId:[personId integerValue] imageUpload:imageUpload completion:^(RFSItemResponse<RFSPersonImage *> * response) {
-        if(response.error != nil)
+    [RFSFaceSDK.service.personDatabase addPersonImageByPersonId:personId imageUpload:imageUpload completion:^(RFSItemResponse<RFSPersonImage *> * response) {
+        if(response.error == nil)
             [self result:[RFSWJSONConstructor dictToString:[RFSWJSONConstructor generateRFSPersonImage:response.item]] :successCallback];
         else
             [self result:[RFSWJSONConstructor generateNSError:response.error] :errorCallback];
     }];
 }
 
-- (void) getPersonImage:(NSNumber*)personId :(NSNumber*)imageId :(RFSWCallback)successCallback :(RFSWCallback)errorCallback{
-    [RFSFaceSDK.service.personDatabase getPersonImageByPersonId:[personId integerValue] imageId:[imageId integerValue] completion:^(RFSDataResponse* response) {
-        if(response.error != nil)
+- (void) getPersonImage:(NSString*)personId :(NSString*)imageId :(RFSWCallback)successCallback :(RFSWCallback)errorCallback{
+    [RFSFaceSDK.service.personDatabase getPersonImageByPersonId:personId imageId:imageId completion:^(RFSDataResponse* response) {
+        if(response.error == nil)
             [self result:[RFSWJSONConstructor dictToString:[RFSWJSONConstructor generateNSDataImage:response.data]] :successCallback];
         else
             [self result:[RFSWJSONConstructor generateNSError:response.error] :errorCallback];
     }];
 }
 
-- (void) deletePersonImage:(NSNumber*)personId :(NSNumber*)imageId :(RFSWCallback)successCallback :(RFSWCallback)errorCallback{
-    [RFSFaceSDK.service.personDatabase deletePersonImageByPersonId:[personId integerValue] imageId: [imageId integerValue] completion:^(RFSComfirmResponse * success) {
+- (void) deletePersonImage:(NSString*)personId :(NSString*)imageId :(RFSWCallback)successCallback :(RFSWCallback)errorCallback{
+    [RFSFaceSDK.service.personDatabase deletePersonImageByPersonId:personId imageId: imageId completion:^(RFSComfirmResponse * success) {
         if(success)
             [self result:@"" :successCallback];
         else
@@ -456,7 +432,7 @@ static CDVInvokedUrlCommand* _command;
 
 - (void) getGroups:(RFSWCallback)successCallback :(RFSWCallback)errorCallback{
     [RFSFaceSDK.service.personDatabase getGroups:^(RFSPageResponse<RFSPersonGroup *> * response) {
-        if(response.error != nil)
+        if(response.error == nil)
             [self result:[RFSWJSONConstructor dictToString:[RFSWJSONConstructor generateRFSPagePersonGroupResponse:response]] :successCallback];
         else
             [self result:[RFSWJSONConstructor generateNSError:response.error] :errorCallback];
@@ -465,25 +441,25 @@ static CDVInvokedUrlCommand* _command;
 
 - (void) getGroupsForPage:(NSNumber*)page :(NSNumber*)size :(RFSWCallback)successCallback :(RFSWCallback)errorCallback{
     [RFSFaceSDK.service.personDatabase getGroupsForPage:[page integerValue] size:[size integerValue] completion:^(RFSPageResponse<RFSPersonGroup *> * response) {
-        if(response.error != nil)
+        if(response.error == nil)
             [self result:[RFSWJSONConstructor dictToString:[RFSWJSONConstructor generateRFSPagePersonGroupResponse:response]] :successCallback];
         else
             [self result:[RFSWJSONConstructor generateNSError:response.error] :errorCallback];
     }];
 }
 
-- (void) getPersonGroups:(NSNumber*)personId :(RFSWCallback)successCallback :(RFSWCallback)errorCallback{
-    [RFSFaceSDK.service.personDatabase getPersonGroupsByPersonId:[personId integerValue] completion:^(RFSPageResponse<RFSPersonGroup *> * response) {
-        if(response.error != nil)
+- (void) getPersonGroups:(NSString*)personId :(RFSWCallback)successCallback :(RFSWCallback)errorCallback{
+    [RFSFaceSDK.service.personDatabase getPersonGroupsByPersonId:personId completion:^(RFSPageResponse<RFSPersonGroup *> * response) {
+        if(response.error == nil)
             [self result:[RFSWJSONConstructor dictToString:[RFSWJSONConstructor generateRFSPagePersonGroupResponse:response]] :successCallback];
         else
             [self result:[RFSWJSONConstructor generateNSError:response.error] :errorCallback];
     }];
 }
 
-- (void) getPersonGroupsForPage:(NSNumber*)personId :(NSNumber*)page :(NSNumber*)size :(RFSWCallback)successCallback :(RFSWCallback)errorCallback{
-    [RFSFaceSDK.service.personDatabase getPersonGroupsByPersonId:[personId integerValue] page:[page integerValue] size:[size integerValue] completion:^(RFSPageResponse<RFSPersonGroup *> * response) {
-        if(response.error != nil)
+- (void) getPersonGroupsForPage:(NSString*)personId :(NSNumber*)page :(NSNumber*)size :(RFSWCallback)successCallback :(RFSWCallback)errorCallback{
+    [RFSFaceSDK.service.personDatabase getPersonGroupsByPersonId:personId page:[page integerValue] size:[size integerValue] completion:^(RFSPageResponse<RFSPersonGroup *> * response) {
+        if(response.error == nil)
             [self result:[RFSWJSONConstructor dictToString:[RFSWJSONConstructor generateRFSPagePersonGroupResponse:response]] :successCallback];
         else
             [self result:[RFSWJSONConstructor generateNSError:response.error] :errorCallback];
@@ -499,8 +475,8 @@ static CDVInvokedUrlCommand* _command;
     }];
 }
 
-- (void) getGroup:(NSNumber*)groupId :(RFSWCallback)successCallback :(RFSWCallback)errorCallback{
-    [RFSFaceSDK.service.personDatabase getGroupByGroupId:[groupId integerValue] completion:^(RFSItemResponse<RFSPersonGroup *> * response) {
+- (void) getGroup:(NSString*)groupId :(RFSWCallback)successCallback :(RFSWCallback)errorCallback{
+    [RFSFaceSDK.service.personDatabase getGroupByGroupId:groupId completion:^(RFSItemResponse<RFSPersonGroup *> * response) {
         if(response.error == nil)
             [self result:[RFSWJSONConstructor dictToString:[RFSWJSONConstructor generateRFSPersonGroup:response.item]] :successCallback];
         else
@@ -508,18 +484,26 @@ static CDVInvokedUrlCommand* _command;
     }];
 }
 
-- (void) updateGroup:(NSNumber*)groupId :(NSString*)name :(NSDictionary*)metadata :(RFSWCallback)successCallback :(RFSWCallback)errorCallback{
-    [RFSFaceSDK.service.personDatabase updateGroupByGroupId:[groupId integerValue] name:name metadata:metadata completion:^(RFSComfirmResponse * success) {
-        if(success)
-            [self result:@"" :successCallback];
-        else
-            [self result:@"" :errorCallback];
+- (void) updateGroup:(NSDictionary*)group :(RFSWCallback)successCallback :(RFSWCallback)errorCallback{
+    [RFSFaceSDK.service.personDatabase getGroupByGroupId:[RFSWJSONConstructor idFromJSON:group] completion:^(RFSItemResponse<RFSPersonGroup *> * response) {
+        if(response.error == nil) {
+            if(response.item != nil) {
+                [RFSFaceSDK.service.personDatabase updateGroup:[RFSWJSONConstructor updatePersonGroupFromJSON:response.item :group] completion:^(RFSComfirmResponse * success) {
+                    if(success)
+                        [self result:@"" :successCallback];
+                    else
+                        [self result:@"" :errorCallback];
+                }];
+            } else
+                [self result:@"id does not exist" :errorCallback];
+        } else
+            [self result:[RFSWJSONConstructor generateNSError:response.error] :errorCallback];
     }];
 }
 
-- (void) editPersonsInGroup:(NSNumber*)groupId :(NSDictionary*)editGroupPersonsRequest :(RFSWCallback)successCallback :(RFSWCallback)errorCallback{
+- (void) editPersonsInGroup:(NSString*)groupId :(NSDictionary*)editGroupPersonsRequest :(RFSWCallback)successCallback :(RFSWCallback)errorCallback{
     RFSEditGroupPersonsRequest *request = [RFSWJSONConstructor RFSEditGroupPersonsRequestFromJSON:editGroupPersonsRequest];
-    [RFSFaceSDK.service.personDatabase editGroupPersonsByGroupId:[groupId integerValue] request:request completion:^(RFSComfirmResponse * success) {
+    [RFSFaceSDK.service.personDatabase editGroupPersonsByGroupId:groupId request:request completion:^(RFSComfirmResponse * success) {
         if(success)
             [self result:@"" :successCallback];
         else
@@ -527,26 +511,26 @@ static CDVInvokedUrlCommand* _command;
     }];
 }
 
-- (void) getPersonsInGroup:(NSNumber*)groupId :(RFSWCallback)successCallback :(RFSWCallback)errorCallback{
-    [RFSFaceSDK.service.personDatabase getGroupPersonsByGroupId:[groupId integerValue] completion:^(RFSPageResponse<RFSPerson *> * response) {
-        if(response.error != nil)
+- (void) getPersonsInGroup:(NSString*)groupId :(RFSWCallback)successCallback :(RFSWCallback)errorCallback{
+    [RFSFaceSDK.service.personDatabase getGroupPersonsByGroupId:groupId completion:^(RFSPageResponse<RFSPerson *> * response) {
+        if(response.error == nil)
             [self result:[RFSWJSONConstructor dictToString:[RFSWJSONConstructor generateRFSPagePersonResponse:response]] :successCallback];
         else
             [self result:[RFSWJSONConstructor generateNSError:response.error] :errorCallback];
     }];
 }
 
-- (void) getPersonsInGroupForPage:(NSNumber*)groupId :(NSNumber*)page :(NSNumber*)size :(RFSWCallback)successCallback :(RFSWCallback)errorCallback{
-    [RFSFaceSDK.service.personDatabase getGroupPersonsByGroupId:[groupId integerValue] page:[page integerValue] size:[size integerValue] completion:^(RFSPageResponse<RFSPerson *> * response) {
-        if(response.error != nil)
+- (void) getPersonsInGroupForPage:(NSString*)groupId :(NSNumber*)page :(NSNumber*)size :(RFSWCallback)successCallback :(RFSWCallback)errorCallback{
+    [RFSFaceSDK.service.personDatabase getGroupPersonsByGroupId:groupId page:[page integerValue] size:[size integerValue] completion:^(RFSPageResponse<RFSPerson *> * response) {
+        if(response.error == nil)
             [self result:[RFSWJSONConstructor dictToString:[RFSWJSONConstructor generateRFSPagePersonResponse:response]] :successCallback];
         else
             [self result:[RFSWJSONConstructor generateNSError:response.error] :errorCallback];
     }];
 }
 
-- (void) deleteGroup:(NSNumber*)groupId :(RFSWCallback)successCallback :(RFSWCallback)errorCallback{
-    [RFSFaceSDK.service.personDatabase deleteGroupByGroupId:[groupId integerValue] completion:^(RFSComfirmResponse * success) {
+- (void) deleteGroup:(NSString*)groupId :(RFSWCallback)successCallback :(RFSWCallback)errorCallback{
+    [RFSFaceSDK.service.personDatabase deleteGroupByGroupId:groupId completion:^(RFSComfirmResponse * success) {
         if(success)
             [self result:@"" :successCallback];
         else
@@ -557,7 +541,7 @@ static CDVInvokedUrlCommand* _command;
 - (void) searchPerson:(NSDictionary*)searchPersonRequest :(RFSWCallback)successCallback :(RFSWCallback)errorCallback{
     RFSSearchPersonRequest *request = [RFSWJSONConstructor RFSSearchPersonRequestFromJSON:searchPersonRequest];
     [RFSFaceSDK.service.personDatabase searchPerson:request completion:^(RFSSearchPersonResponse *response) {
-        if(response.error != nil) {
+        if(response.error == nil) {
             NSMutableArray<NSDictionary*> *results = [NSMutableArray new];
             for(RFSSearchPerson* searchPerson in response.results)
                 [results addObject:[RFSWJSONConstructor generateRFSSearchPerson:searchPerson]];
