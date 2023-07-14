@@ -75,8 +75,6 @@ static CDVInvokedUrlCommand* _command;
         [self matchFaces :[args objectAtIndex:0] :successCallback :errorCallback];
     else if([action isEqualToString:@"detectFaces"])
         [self detectFaces :[args objectAtIndex:0] :successCallback :errorCallback];
-    else if([action isEqualToString:@"setOnCustomButtonTappedListener"])
-        [self setOnCustomButtonTappedListener :successCallback :errorCallback];
     else if([action isEqualToString:@"setUiCustomizationLayer"])
         [self setUiCustomizationLayer :[args objectAtIndex:0] :successCallback :errorCallback];
     else if([action isEqualToString:@"setUiConfiguration"])
@@ -156,6 +154,7 @@ static CDVInvokedUrlCommand* _command;
         if(success){
             [RFSFaceSDK.service setVideoUploadingDelegate:self];
             [RFSFaceSDK.service setProcessStatusDelegate:self];
+            RFSFaceSDK.service.customization.actionDelegate = self;
         }
         [self result:[RFSWJSONConstructor dictToString:[RFSWJSONConstructor generateInitCompletion:success :error]] :successCallback];
     }];
@@ -168,11 +167,6 @@ static CDVInvokedUrlCommand* _command;
 
 - (void) isInitialized:(RFSWCallback)successCallback :(RFSWCallback)errorCallback {
     [self result:@"isInitialized() is an android-only method" :errorCallback];
-}
-
-- (void) setOnCustomButtonTappedListener:(RFSWCallback)successCallback :(RFSWCallback)errorCallback{
-    RFSFaceSDK.service.customization.actionDelegate = self;
-    [self result:@"" :successCallback];
 }
 
 - (void) setUiCustomizationLayer:(NSDictionary*)json :(RFSWCallback)successCallback :(RFSWCallback)errorCallback{
