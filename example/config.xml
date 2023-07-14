@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<widget android-packageName="com.regula.faceapi" ios-CFBundleIdentifier="regula.FaceApi" version="1.0.0" xmlns:android="http://schemas.android.com/apk/res/android" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
+<widget android-packageName="com.regula.faceapi" ios-CFBundleIdentifier="regula.FaceSDKSample" version="1.0.0" xmlns:android="http://schemas.android.com/apk/res/android" xmlns="http://www.w3.org/ns/widgets" xmlns:cdv="http://cordova.apache.org/ns/1.0">
     <name>FaceApi</name>
     <description>
         A sample Regula Face Api application for reading and comparing faces.
@@ -17,6 +17,11 @@
     <allow-intent href="mailto:*" />
     <allow-intent href="geo:*" />
     <platform name="android">
+        <preference name="GradlePluginKotlinEnabled" value="true" />
+        <preference name="GradlePluginKotlinCodeStyle" value="official" />
+        <preference name="GradlePluginKotlinVersion" value="1.7.10" />
+        <preference name="android-minSdkVersion" value="23" />
+        <preference name="android-targetSdkVersion" value="33" />
         <preference name="AndroidXEnabled" value="true" />
         <allow-intent href="market:*" />
         <config-file parent="/manifest/application" target="AndroidManifest.xml">
@@ -25,6 +30,9 @@
         <config-file parent="/*" target="AndroidManifest.xml">
             <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
         </config-file>
+        <edit-config file="app/src/main/AndroidManifest.xml" mode="merge" target="/manifest/application">
+            <application android:usesCleartextTraffic="true" />
+        </edit-config>
     </platform>
     <platform name="ios">
         <allow-intent href="itms:*" />
