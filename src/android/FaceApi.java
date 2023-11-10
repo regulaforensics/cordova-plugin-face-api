@@ -5,18 +5,15 @@ import static cordova.plugin.faceapi.ConfigKt.*;
 import static cordova.plugin.faceapi.UtilsKt.*;
 
 import android.app.Activity;
-import android.app.LocaleManager;
 import android.content.Context;
-import android.content.res.Configuration;
-import android.content.res.Resources;
-import android.os.Build;
-import android.os.LocaleList;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
+import com.regula.common.LocalizationCallbacks;
 import com.regula.facesdk.callback.PersonDBCallback;
 import com.regula.facesdk.exception.InitException;
+import com.regula.facesdk.listener.NetworkInterceptorListener;
 import com.regula.facesdk.model.LivenessNotification;
 import com.regula.facesdk.model.results.matchfaces.MatchFacesComparedFacesPair;
 import com.regula.facesdk.model.results.matchfaces.MatchFacesSimilarityThresholdSplit;
@@ -32,7 +29,6 @@ import org.json.JSONObject;
 
 import java.util.Iterator;
 import java.util.List;
-import java.util.Locale;
 
 @SuppressWarnings({"ConstantConditions", "RedundantSuppression"})
 public class FaceApi extends CordovaPlugin {
@@ -139,8 +135,8 @@ public class FaceApi extends CordovaPlugin {
                 case "setUiConfiguration":
                     setUiConfiguration(callback, args(0));
                     break;
-                case "setLanguage":
-                    setLanguage(callback, args(0));
+                case "setLocalizationDictionary":
+                    setLocalizationDictionary(callback, args(0));
                     break;
                 case "matchFacesSimilarityThresholdSplit":
                     matchFacesSimilarityThresholdSplit(callback, args(0), args(1));
@@ -220,18 +216,15 @@ public class FaceApi extends CordovaPlugin {
     }
 
     private void setRequestHeaders(Callback callback, JSONObject headers) {
-        Instance().setNetworkInterceptorListener(requestBuilder -> {
-            try {
-                Iterator<String> keys = headers.keys();
-                while (keys.hasNext()) {
-                    String key = keys.next();
-                    String value = (String) headers.get(key);
-                    requestBuilder.header(key, value);
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
+        networkInterceptorListener = requestBuilder -> {
+            Iterator<String> keys = headers.keys();
+            while (keys.hasNext()) {
+                String key = keys.next();
+                String value = headers.optString(key);
+                requestBuilder.header(key, value);
             }
-        });
+        };
+        Instance().setNetworkInterceptorListener(networkInterceptorListener);
         callback.success(null);
     }
 
@@ -330,18 +323,9 @@ public class FaceApi extends CordovaPlugin {
         callback.success(null);
     }
 
-    private void setLanguage(Callback callback, String language) {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            LocaleManager localeManager = (LocaleManager) getContext().getSystemService(Context.LOCALE_SERVICE);
-            localeManager.setApplicationLocales(new LocaleList(Locale.forLanguageTag(language)));
-        } else {
-            Locale locale = new Locale(language);
-            Locale.setDefault(locale);
-            Resources resources = getContext().getResources();
-            Configuration config = resources.getConfiguration();
-            config.setLocale(locale);
-            resources.updateConfiguration(config, resources.getDisplayMetrics());
-        }
+    private void setLocalizationDictionary(Callback callback, JSONObject dictionary) {
+        localizationCallbacks = key -> dictionary == null ? null : dictionary.optString(key, null);
+        Instance().setLocalizationCallback(localizationCallbacks);
         callback.success(null);
     }
 
@@ -454,4 +438,8 @@ public class FaceApi extends CordovaPlugin {
     private void searchPerson(Callback callback, JSONObject searchPersonRequest) {
         Instance().personDatabase().searchPerson(JSONConstructor.SearchPersonRequestFromJSON(searchPersonRequest), createPersonDBListCallback(callback, JSONConstructor::generateSearchPerson));
     }
+
+    // Weak references
+    LocalizationCallbacks localizationCallbacks = null;
+    NetworkInterceptorListener networkInterceptorListener = null;
 }
