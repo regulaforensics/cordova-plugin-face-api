@@ -1010,7 +1010,7 @@ FaceSDK.matchFaces = (request, successCallback, errorCallback) => cordova.exec(s
 FaceSDK.detectFaces = (request, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["detectFaces", request])
 FaceSDK.setUiCustomizationLayer = (json, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["setUiCustomizationLayer", json])
 FaceSDK.setUiConfiguration = (config, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["setUiConfiguration", config])
-FaceSDK.setLanguage = (language, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["setLanguage", language])
+FaceSDK.setLocalizationDictionary = (dictionary, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["setLocalizationDictionary", dictionary])
 FaceSDK.matchFacesSimilarityThresholdSplit = (faces, similarity, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["matchFacesSimilarityThresholdSplit", faces, similarity])
 FaceSDK.getPerson = (personId, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["getPerson", personId])
 FaceSDK.createPerson = (name, groupIds, metadata, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["createPerson", name, groupIds, metadata])
