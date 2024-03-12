@@ -14,6 +14,7 @@ var app = {
         var MatchFacesRequest = FaceSDKPlugin.MatchFacesRequest
         var MatchFacesImage = FaceSDKPlugin.MatchFacesImage
         var MatchFacesSimilarityThresholdSplit = FaceSDKPlugin.MatchFacesSimilarityThresholdSplit
+        var InitializationConfiguration = FaceSDKPlugin.InitializationConfiguration
         var Enum = FaceSDKPlugin.Enum
 
         var image1 = new MatchFacesImage()
@@ -28,7 +29,7 @@ var app = {
         document.getElementById("liveness").addEventListener("click", liveness)
         document.getElementById("clearResults").addEventListener("click", clearResults)
 
-        FaceSDK.init(json => {
+        var onInit = (json) => {
             response = JSON.parse(json)
             if (!response["success"]) {
                 console.log("Init failed: ");
@@ -36,26 +37,39 @@ var app = {
             } else {
                 console.log("Init complete")
             }
-        }, e => {})
+        }
+
+        path = cordova.file.applicationDirectory + "www/regula.license"
+        window.resolveLocalFileSystemURL(path, function (fileEntry) {
+            fileEntry.file(function (file) {
+                var reader = new FileReader()
+                reader.onloadend = function (e) {
+                    license = this.result.substring(this.result.indexOf(',') + 1)
+                    var config = new InitializationConfiguration();
+                    config.license = license
+                    FaceSDK.initializeWithConfig(config, onInit, e => { })
+                }
+                reader.readAsDataURL(file)
+            })
+        }, function (e) {
+            FaceSDK.initialize(onInit, e => { })
+        })
 
         function pickImage(first) {
             navigator.notification.confirm("Choose the option", button => {
                 if (button == 1)
-                FaceSDK.presentFaceCaptureActivity(result => {
+                    FaceSDK.presentFaceCaptureActivity(result => {
                         setImage(first, FaceCaptureResponse.fromJson(JSON.parse(result)).image.bitmap, Enum.ImageType.LIVE)
                     }, e => { })
-                else if (button == 2)
-                    if (window.cordova.platformId == "android")
-                        useGalleryAndroid(first)
-                    else if (window.cordova.platformId == "ios")
-                        useGallery(first)
+                else
+                    navigator.camera.getPicture(function (result) {
+                        setImage(first, result, Enum.ImageType.PRINTED)
+                    }, function (e) { }, {
+                        destinationType: Camera.DestinationType.DATA_URL,
+                        sourceType: Camera.PictureSourceType.PHOTOLIBRARY,
+                        mediaType: Camera.MediaType.PICTURE
+                    })
             }, "", ["Use camera", "Use gallery"])
-        }
-
-        function useGallery(first) {
-            window.imagePicker.getPictures(function (results) {
-                setImage(first, results[0], Enum.ImageType.PRINTED)
-            }, function (e) { }, { maximumImagesCount: 1, outputType: window.imagePicker.OutputType.BASE64_STRING })
         }
 
         function setImage(first, base64, type) {
@@ -94,7 +108,7 @@ var app = {
                     split = MatchFacesSimilarityThresholdSplit.fromJson(JSON.parse(split))
                     document.getElementById("similarityResult").innerHTML = split.matchedFaces.length > 0 ?
                         ((split.matchedFaces[0].similarity * 100).toFixed(2) + "%") : "error"
-                }, (error) => {});
+                }, (error) => { });
             }, e => { this.setState({ similarity: e }) })
         }
 
@@ -106,22 +120,6 @@ var app = {
                 if (result.bitmap != null)
                     document.getElementById("livenessResult").innerHTML = result["liveness"] == Enum.LivenessStatus.PASSED ? "passed" : "unknown"
             }, e => { })
-        }
-
-        function useGalleryAndroid(first) {
-            var permissions = cordova.plugins.permissions
-            permissions.checkPermission(permissions.READ_EXTERNAL_STORAGE, function (status) {
-                if (status.hasPermission)
-                    useGallery(first)
-                else {
-                    permissions.requestPermission(permissions.READ_EXTERNAL_STORAGE, function success(status) {
-                        if (status.hasPermission)
-                            useGallery(first)
-                    }, function error() {
-                        console.warn('READ_EXTERNAL_STORAGE permission denied')
-                    })
-                }
-            })
         }
     },
 
