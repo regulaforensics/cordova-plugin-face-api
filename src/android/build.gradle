@@ -6,7 +6,7 @@ android {
 
 repositories {
     maven {
-        url ""
+        url "https://maven.regulaforensics.com/RegulaDocumentReader/Nightly"
     }
 }
 
