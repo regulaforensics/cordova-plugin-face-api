@@ -8,6 +8,7 @@ import android.graphics.Color;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.graphics.Typeface;
+import android.util.Log;
 import android.util.Pair;
 import android.util.Size;
 
@@ -32,6 +33,7 @@ import com.regula.facesdk.exception.LicenseException;
 import com.regula.facesdk.exception.LivenessBackendException;
 import com.regula.facesdk.exception.LivenessErrorException;
 import com.regula.facesdk.exception.MatchFacesException;
+import com.regula.facesdk.exception.UnderlineException;
 import com.regula.facesdk.model.Image;
 import com.regula.facesdk.model.LivenessNotification;
 import com.regula.facesdk.model.MatchFacesImage;
@@ -60,8 +62,10 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.List;
 
-@SuppressWarnings({"UnnecessaryLocalVariable", "UnusedAssignment", "ConstantConditions", "EnhancedSwitchMigration", "RedundantSuppression"})
+@SuppressWarnings({"UnnecessaryLocalVariable", "UnusedAssignment", "ConstantConditions", "EnhancedSwitchMigration"})
 class JSONConstructor {
+    static String LOG_TAG = "FaceSDKWrapper";
+
     static JSONObject generateByteArrayImage(byte[] input) {
         if (input == null) return null;
         JSONObject result = new JSONObject();
@@ -79,7 +83,7 @@ class JSONConstructor {
             result.put("transactionId", transactionId);
             result.put("success", success);
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
         return result;
     }
@@ -90,7 +94,7 @@ class JSONConstructor {
             result.put("error", generateInitException(error));
             result.put("success", success);
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
         return result;
     }
@@ -103,7 +107,7 @@ class JSONConstructor {
                 builder.setLicenseUpdate(input.getBoolean("licenseUpdate"));
             return builder.build();
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
         return null;
     }
@@ -120,7 +124,7 @@ class JSONConstructor {
             if (!Double.isNaN(input.getRotationAngle()))
                 result.put("rotationAngle", input.getRotationAngle());
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
         return result;
     }
@@ -145,7 +149,7 @@ class JSONConstructor {
             OutputImageParams result = new OutputImageParams(imageCropParams, backgroundColor);
             return result;
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
         return null;
     }
@@ -202,7 +206,7 @@ class JSONConstructor {
             } else return new OutputImageCrop(type, size, padColor);
             return new OutputImageCrop(type, size, padColor, returnOriginalRect);
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
         return null;
     }
@@ -408,7 +412,7 @@ class JSONConstructor {
             }
             return singletonList(result);
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
         return null;
     }
@@ -442,7 +446,7 @@ class JSONConstructor {
             }
             return result;
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
         return null;
     }
@@ -519,7 +523,7 @@ class JSONConstructor {
             MatchFacesComparedFacesPair result = (new com.regula.facesdk.model.results.matchfaces.b()).a(first, second, exception, similarity, score).a();
             return result;
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
         return null;
     }
@@ -556,7 +560,7 @@ class JSONConstructor {
             result.a(crop);
             return result.a();
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
         return null;
     }
@@ -582,7 +586,7 @@ class JSONConstructor {
             MatchFacesComparedFace result = (new com.regula.facesdk.model.results.matchfaces.a()).a(imageIndex, image, faceIndex, face).a();
             return result;
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
         return null;
     }
@@ -598,7 +602,7 @@ class JSONConstructor {
         try {
             return input.getString("id");
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
         return null;
     }
@@ -617,7 +621,7 @@ class JSONConstructor {
             }
             return result;
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
         return null;
     }
@@ -636,7 +640,7 @@ class JSONConstructor {
             }
             return result;
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
         return null;
     }
@@ -648,7 +652,7 @@ class JSONConstructor {
             result.put("errorCode", input.getErrorCode() == null ? null : input.getErrorCode().ordinal());
             result.put("message", input.getMessage());
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
         return result;
     }
@@ -658,22 +662,22 @@ class JSONConstructor {
         if (input == null) return null;
         try {
             result.put("errorCode", input.getErrorCode() == null ? null : input.getErrorCode().getValue());
-            result.put("underlyingException", generateLicenseException(input.getUnderlyingError()));
             result.put("message", input.getMessage());
+            result.put("underlyingException", generateUnderlyingException(input.getUnderlyingError()));
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
         return result;
     }
 
-    static JSONObject generateLicenseException(LicenseException input) {
+    static JSONObject generateUnderlyingException(LicenseException input) {
         JSONObject result = new JSONObject();
         if (input == null) return null;
         try {
             result.put("errorCode", input.getErrorCode() == null ? null : input.getErrorCode().ordinal());
             result.put("message", input.getMessage());
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
         return result;
     }
@@ -683,22 +687,22 @@ class JSONConstructor {
         if (input == null) return null;
         try {
             result.put("errorCode", input.getErrorCode() == null ? null : input.getErrorCode().ordinal());
-            result.put("underlyingException", generateLivenessBackendException(input.getUnderlyingException()));
             result.put("message", input.getMessage());
+            result.put("underlyingException", generateUnderlyingException(input.getUnderlyingException()));
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
         return result;
     }
 
-    static JSONObject generateLivenessBackendException(LivenessBackendException input) {
+    static JSONObject generateUnderlyingException(LivenessBackendException input) {
         JSONObject result = new JSONObject();
         if (input == null) return null;
         try {
             result.put("errorCode", input.getErrorCode() == null ? null : input.getErrorCode().getValue());
             result.put("message", input.getMessage());
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
         return result;
     }
@@ -709,9 +713,21 @@ class JSONConstructor {
         try {
             result.put("errorCode", input.getErrorCode() == null ? null : input.getErrorCode().ordinal());
             result.put("message", input.getMessage());
-            result.put("detailedErrorMessage", input.getDetailedErrorMessage());
+            result.put("underlyingException", generateUnderlyingException(input.getUnderlineException()));
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
+        }
+        return result;
+    }
+
+    static JSONObject generateUnderlyingException(UnderlineException input) {
+        JSONObject result = new JSONObject();
+        if (input == null) return null;
+        try {
+            result.put("errorCode", -1);
+            result.put("message", input.getMessage());
+        } catch (JSONException e) {
+            Log.e(LOG_TAG, e.toString());
         }
         return result;
     }
@@ -725,7 +741,7 @@ class JSONConstructor {
             MatchFacesException result = new MatchFacesException(errorCode);
             return result;
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
         return null;
     }
@@ -735,22 +751,22 @@ class JSONConstructor {
         if (input == null) return null;
         try {
             result.put("errorCode", input.getErrorCode() == null ? null : input.getErrorCode().ordinal());
-            result.put("underlyingException", generateDetectFacesBackendException(input.getUnderlyingException()));
             result.put("message", input.getMessage());
+            result.put("underlyingException", generateUnderlyingException(input.getUnderlyingException()));
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
         return result;
     }
 
-    static JSONObject generateDetectFacesBackendException(DetectFacesBackendException input) {
+    static JSONObject generateUnderlyingException(DetectFacesBackendException input) {
         JSONObject result = new JSONObject();
         if (input == null) return null;
         try {
             result.put("errorCode", input.getErrorCode() == null ? input.getErrorCode() : input.getErrorCode().getValue());
             result.put("message", input.getMessage());
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
         return result;
     }
@@ -764,7 +780,7 @@ class JSONConstructor {
             result.put("exception", generateFaceCaptureException(input.getException()));
             result.put("image", generateImage(input.getImage()));
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
         return result;
     }
@@ -780,7 +796,7 @@ class JSONConstructor {
             result.put("estimatedAge", input.getEstimatedAge());
             result.put("exception", generateLivenessErrorException(input.getException()));
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
         return result;
     }
@@ -794,7 +810,7 @@ class JSONConstructor {
             result.put("detections", generateList(input.getDetections(), JSONConstructor::generateMatchFacesDetection));
             result.put("results", generateList(input.getResults(), JSONConstructor::generateMatchFacesComparedFacesPair));
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
         return result;
     }
@@ -808,7 +824,7 @@ class JSONConstructor {
             result.put("tag", input.getTag());
             result.put("imageData", generateByteArray(input.getImageData()));
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
         return result;
     }
@@ -822,7 +838,7 @@ class JSONConstructor {
             result.put("bitmap", generateBitmap(input.getBitmap()));
             result.put("identifier", input.getIdentifier());
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
         return result;
     }
@@ -837,7 +853,7 @@ class JSONConstructor {
             result.put("score", input.getScore());
             result.put("exception", generateMatchFacesException(input.getException()));
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
         return result;
     }
@@ -851,7 +867,7 @@ class JSONConstructor {
             result.put("faceIndex", input.getFaceIndex());
             result.put("imageIndex", input.getImageIndex());
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
         return result;
     }
@@ -867,7 +883,7 @@ class JSONConstructor {
             result.put("originalRect", generateRect(input.getOriginalRect()));
             result.put("crop", generateBitmap(input.getCrop()));
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
         return result;
     }
@@ -881,7 +897,7 @@ class JSONConstructor {
             result.put("faces", generateList(input.getFaces(), JSONConstructor::generateMatchFacesDetectionFace));
             result.put("exception", generateMatchFacesException(input.getException()));
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
         return result;
     }
@@ -893,7 +909,7 @@ class JSONConstructor {
             result.put("x", input.x);
             result.put("y", input.y);
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
         return result;
     }
@@ -907,7 +923,7 @@ class JSONConstructor {
             result.put("left", input.left);
             result.put("right", input.right);
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
         return result;
     }
@@ -919,7 +935,7 @@ class JSONConstructor {
             result.put("matchedFaces", generateList(input.getMatchedFaces(), JSONConstructor::generateMatchFacesComparedFacesPair));
             result.put("unmatchedFaces", generateList(input.getUnmatchedFaces(), JSONConstructor::generateMatchFacesComparedFacesPair));
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
         return result;
     }
@@ -931,7 +947,7 @@ class JSONConstructor {
             result.put("min", input.getMin());
             result.put("max", input.getMax());
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
         return result;
     }
@@ -945,7 +961,7 @@ class JSONConstructor {
             result.put("error", generateDetectFacesErrorException(input.getError()));
             result.put("allDetections", generateList(input.getAllDetections(), JSONConstructor::generateDetectFaceResult));
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
         return result;
     }
@@ -962,7 +978,7 @@ class JSONConstructor {
             result.put("originalRect", generateRect(input.getOriginalRect()));
             result.put("isQualityCompliant", input.isQualityCompliant());
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
         return result;
     }
@@ -977,7 +993,7 @@ class JSONConstructor {
             result.put("range", generateImageQualityRange(input.getRange()));
             result.put("value", input.getValue());
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
         return result;
     }
@@ -991,7 +1007,7 @@ class JSONConstructor {
             result.put("range", generateImageQualityRange(input.getRange()));
             result.put("confidence", input.getConfidence());
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
         return result;
     }
@@ -1007,7 +1023,7 @@ class JSONConstructor {
             result.put("metadata", input.getMetadata());
             result.put("createdAt", input.getCreatedAt().toString());
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
         return result;
     }
@@ -1021,7 +1037,7 @@ class JSONConstructor {
             result.put("metadata", input.getMetadata());
             result.put("createdAt", input.getCreatedAt().toString());
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
         return result;
     }
@@ -1037,7 +1053,7 @@ class JSONConstructor {
             result.put("metadata", input.getMetadata());
             result.put("createdAt", input.getCreatedAt().toString());
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
         return result;
     }
@@ -1055,7 +1071,7 @@ class JSONConstructor {
             result.put("metadata", input.getMetadata());
             result.put("createdAt", input.getCreatedAt().toString());
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
         return result;
     }
@@ -1073,7 +1089,7 @@ class JSONConstructor {
             result.put("metadata", input.getMetadata());
             result.put("createdAt", input.getCreatedAt().toString());
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
         return result;
     }
@@ -1085,7 +1101,7 @@ class JSONConstructor {
             result.put("status", input.getStatus() == null ? input.getStatus() : input.getStatus().toString());
             result.put("response", generateLivenessResponse(input.getResponse()));
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
         return result;
     }
@@ -1118,7 +1134,7 @@ class JSONConstructor {
             }
             return result;
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
         return null;
     }
@@ -1144,7 +1160,7 @@ class JSONConstructor {
             MatchFacesImage result = new MatchFacesImage(bitmap, imageType, detectAll);
             return result;
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
         return null;
     }
@@ -1164,7 +1180,7 @@ class JSONConstructor {
             }
             return result;
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
         return null;
     }
@@ -1194,7 +1210,7 @@ class JSONConstructor {
             }
             return result;
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
         return null;
     }
@@ -1212,7 +1228,7 @@ class JSONConstructor {
             Size result = new Size(width, height);
             return result;
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
         return null;
     }
@@ -1232,7 +1248,7 @@ class JSONConstructor {
             }
             return result;
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
         return null;
     }
@@ -1258,7 +1274,7 @@ class JSONConstructor {
             }
             return result;
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
         return null;
     }
@@ -1301,7 +1317,7 @@ class JSONConstructor {
             }
             return result;
         } catch (JSONException e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
         return null;
     }

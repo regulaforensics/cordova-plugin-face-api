@@ -24,6 +24,20 @@
 
     result[@"errorCode"] = [NSNumber numberWithInteger:input.code];
     result[@"message"] = input.localizedDescription;
+    result[@"underlyingException"] = [self generateUnderlyingError:input];
+
+    return result;
+}
+
++(NSMutableDictionary* _Nullable)generateUnderlyingError:(NSError* _Nullable)input {
+    if([input.userInfo valueForKey:NSUnderlyingErrorKey] == nil) return nil;
+    NSError* temp = [input.userInfo valueForKey:NSUnderlyingErrorKey];
+    if([temp.userInfo valueForKey:NSUnderlyingErrorKey] == nil) return nil;
+    RFSBackendError* error = temp.userInfo[NSUnderlyingErrorKey];
+    NSMutableDictionary *result = [NSMutableDictionary new];
+
+    result[@"errorCode"] = [NSNumber numberWithInteger:error.code];
+    result[@"message"] = error.userInfo[RFSBackendErrorOriginalMessageKey];
 
     return result;
 }

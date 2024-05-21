@@ -13,8 +13,9 @@ var app = {
         var MatchFacesResponse = FaceSDKPlugin.MatchFacesResponse
         var MatchFacesRequest = FaceSDKPlugin.MatchFacesRequest
         var MatchFacesImage = FaceSDKPlugin.MatchFacesImage
-        var MatchFacesSimilarityThresholdSplit = FaceSDKPlugin.MatchFacesSimilarityThresholdSplit
-        var InitializationConfiguration = FaceSDKPlugin.InitializationConfiguration
+        var ComparedFacesSplit = FaceSDKPlugin.ComparedFacesSplit
+        var InitConfig = FaceSDKPlugin.InitConfig
+        var InitResponse = FaceSDKPlugin.InitResponse
         var Enum = FaceSDKPlugin.Enum
 
         var image1 = new MatchFacesImage()
@@ -30,13 +31,13 @@ var app = {
         document.getElementById("clearResults").addEventListener("click", clearResults)
 
         var onInit = (json) => {
-            response = JSON.parse(json)
-            if (!response["success"]) {
-                console.log("Init failed: ");
-                console.log(json);
-            } else {
+            response = InitResponse.fromJson(JSON.parse(json))
+            if (!response.success) {
+                console.log(response.error.code);
+                console.log(response.error.message);
+              } else {
                 console.log("Init complete")
-            }
+              }
         }
 
         path = cordova.file.applicationDirectory + "www/regula.license"
@@ -45,21 +46,21 @@ var app = {
                 var reader = new FileReader()
                 reader.onloadend = function (e) {
                     license = this.result.substring(this.result.indexOf(',') + 1)
-                    var config = new InitializationConfiguration();
+                    var config = new InitConfig();
                     config.license = license
-                    FaceSDK.initializeWithConfig(config, onInit, e => { })
+                    FaceSDK.initialize(config, onInit, e => { })
                 }
                 reader.readAsDataURL(file)
             })
         }, function (e) {
-            FaceSDK.initialize(onInit, e => { })
+            FaceSDK.initialize(null, onInit, e => { })
         })
 
         function pickImage(first) {
             navigator.notification.confirm("Choose the option", button => {
                 if (button == 1)
-                    FaceSDK.presentFaceCaptureActivity(result => {
-                        setImage(first, FaceCaptureResponse.fromJson(JSON.parse(result)).image.bitmap, Enum.ImageType.LIVE)
+                    FaceSDK.startFaceCapture(null, result => {
+                        setImage(first, FaceCaptureResponse.fromJson(JSON.parse(result)).image.image, Enum.ImageType.LIVE)
                     }, e => { })
                 else
                     navigator.camera.getPicture(function (result) {
@@ -76,12 +77,12 @@ var app = {
             if (base64 == null) return
             document.getElementById("similarityResult").innerHTML = "nil"
             if (first) {
-                image1.bitmap = base64
+                image1.image = base64
                 image1.imageType = type
                 document.getElementById("img1").src = "data:image/png;base64," + base64
                 document.getElementById("livenessResult").innerHTML = "nil"
             } else {
-                image2.bitmap = base64
+                image2.image = base64
                 image2.imageType = type
                 document.getElementById("img2").src = "data:image/png;base64," + base64
             }
@@ -97,15 +98,15 @@ var app = {
         }
 
         function matchFaces() {
-            if (image1 == null || image1.bitmap == null || image1.bitmap == "" || image2 == null || image2.bitmap == null || image2.bitmap == "")
+            if (image1 == null || image1.image == null || image1.image == "" || image2 == null || image2.image == null || image2.image == "")
                 return
             document.getElementById("similarityResult").innerHTML = "Processing..."
             request = new MatchFacesRequest()
             request.images = [image1, image2]
-            FaceSDK.matchFaces(JSON.stringify(request), response => {
+            FaceSDK.matchFaces(request, null, response => {
                 response = MatchFacesResponse.fromJson(JSON.parse(response))
-                FaceSDK.matchFacesSimilarityThresholdSplit(JSON.stringify(response.results), 0.75, (split) => {
-                    split = MatchFacesSimilarityThresholdSplit.fromJson(JSON.parse(split))
+                FaceSDK.splitComparedFaces(response.results, 0.75, (split) => {
+                    split = ComparedFacesSplit.fromJson(JSON.parse(split))
                     document.getElementById("similarityResult").innerHTML = split.matchedFaces.length > 0 ?
                         ((split.matchedFaces[0].similarity * 100).toFixed(2) + "%") : "error"
                 }, (error) => { });
@@ -113,11 +114,11 @@ var app = {
         }
 
         function liveness() {
-            FaceSDK.startLiveness(result => {
+            FaceSDK.startLiveness({ skipStep: [Enum.LivenessSkipStep.ONBOARDING_STEP] }, result => {
                 result = LivenessResponse.fromJson(JSON.parse(result))
 
-                setImage(true, result.bitmap, Enum.ImageType.LIVE)
-                if (result.bitmap != null)
+                setImage(true, result.image, Enum.ImageType.LIVE)
+                if (result.image != null)
                     document.getElementById("livenessResult").innerHTML = result["liveness"] == Enum.LivenessStatus.PASSED ? "passed" : "unknown"
             }, e => { })
         }

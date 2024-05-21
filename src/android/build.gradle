@@ -6,13 +6,13 @@ android {
 
 repositories {
     maven {
-        url "https://maven.regulaforensics.com/RegulaDocumentReader"
+        url ""
     }
 }
 
 dependencies {
     //noinspection GradleDependency
-    implementation('com.regula.face:api:6.1.3021'){
+    implementation('com.regula.face:api:6.1.497'){
         transitive = true
     }
 }

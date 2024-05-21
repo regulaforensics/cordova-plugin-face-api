@@ -7,6 +7,7 @@ import static cordova.plugin.faceapi.UtilsKt.*;
 
 import android.app.Activity;
 import android.content.Context;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -229,7 +230,7 @@ public class FaceApi extends CordovaPlugin {
                     break;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            Log.e(LOG_TAG, e.toString());
         }
         return true;
     }

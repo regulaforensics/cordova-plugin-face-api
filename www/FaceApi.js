@@ -1,101 +1,191 @@
 
 // Classes
 
+class Customization {
+    static fromJson(jsonObject) {
+        if (jsonObject == null) return null
+        const result = new Customization()
+
+        result.colors = jsonObject["colors"]
+        result.fonts = jsonObject["fonts"]
+        result.images = jsonObject["images"]
+        result.uiCustomizationLayer = jsonObject["uiCustomizationLayer"]
+
+        return result
+    }
+}
+
+class Font {
+    static fromJson(jsonObject) {
+        if (jsonObject == null) return null
+        const result = new Font()
+
+        result.name = jsonObject["name"]
+        result.style = jsonObject["style"]
+        result.size = jsonObject["size"]
+
+        return result
+    }
+}
+
+class DetectFaceResult {
+    static fromJson(jsonObject) {
+        if (jsonObject == null) return null
+        const result = new DetectFaceResult()
+
+        result.quality = []
+        if (jsonObject["quality"] != null)
+            for (const i in jsonObject["quality"])
+                result.quality.push(ImageQualityResult.fromJson(jsonObject["quality"][i]))
+        result.attributes = []
+        if (jsonObject["attributes"] != null)
+            for (const i in jsonObject["attributes"])
+                result.attributes.push(DetectFacesAttributeResult.fromJson(jsonObject["attributes"][i]))
+        result.crop = jsonObject["crop"]
+        result.faceRect = Rect.fromJson(jsonObject["faceRect"])
+        result.originalRect = Rect.fromJson(jsonObject["originalRect"])
+        result.landmarks = []
+        if (jsonObject["landmarks"] != null)
+            for (const i in jsonObject["landmarks"])
+                result.landmarks.push(Point.fromJson(jsonObject["landmarks"][i]))
+        result.isQualityCompliant = jsonObject["isQualityCompliant"]
+
+        return result
+    }
+}
+
+class DetectFacesAttributeResult {
+    static fromJson(jsonObject) {
+        if (jsonObject == null) return null
+        const result = new DetectFacesAttributeResult()
+
+        result.attribute = jsonObject["attribute"]
+        result.value = jsonObject["value"]
+        result.range = ImageQualityRange.fromJson(jsonObject["range"])
+        result.confidence = jsonObject["confidence"]
+
+        return result
+    }
+}
+
+class DetectFacesConfig {
+    static fromJson(jsonObject) {
+        if (jsonObject == null) return null
+        const result = new DetectFacesConfig()
+
+        result.attributes = []
+        if (jsonObject["attributes"] != null)
+            for (const i in jsonObject["attributes"])
+                result.attributes.push(jsonObject["attributes"][i])
+        result.customQuality = []
+        if (jsonObject["customQuality"] != null)
+            for (const i in jsonObject["customQuality"])
+                result.customQuality.push(ImageQualityCharacteristic.fromJson(jsonObject["customQuality"][i]))
+        result.outputImageParams = OutputImageParams.fromJson(jsonObject["outputImageParams"])
+        result.onlyCentralFace = jsonObject["onlyCentralFace"]
+
+        return result
+    }
+}
+
+class UnderlyingException {
+    static fromJson(jsonObject) {
+        if (jsonObject == null) return null
+        const result = new UnderlyingException()
+
+        result.code = jsonObject["code"]
+        result.message = jsonObject["message"]
+
+        return result
+    }
+}
+
+class DetectFacesException {
+    static fromJson(jsonObject) {
+        if (jsonObject == null) return null
+        const result = new DetectFacesException()
+
+        result.code = jsonObject["code"]
+        result.message = jsonObject["message"]
+        result.underlyingError = UnderlyingException.fromJson(jsonObject["underlyingError"])
+
+        return result
+    }
+}
+
+class DetectFacesRequest {
+    static fromJson(jsonObject) {
+        if (jsonObject == null) return null
+        const result = new DetectFacesRequest()
+
+        result.tag = jsonObject["tag"]
+        result.scenario = jsonObject["scenario"]
+        result.image = jsonObject["image"]
+        result.configuration = DetectFacesConfig.fromJson(jsonObject["configuration"])
+
+        return result
+    }
+}
+
+class DetectFacesResponse {
+    static fromJson(jsonObject) {
+        if (jsonObject == null) return null
+        const result = new DetectFacesResponse()
+
+        result.detection = DetectFaceResult.fromJson(jsonObject["detection"])
+        result.scenario = jsonObject["scenario"]
+        result.error = DetectFacesException.fromJson(jsonObject["error"])
+        result.allDetections = []
+        if (jsonObject["allDetections"] != null)
+            for (const i in jsonObject["allDetections"])
+                result.allDetections.push(DetectFaceResult.fromJson(jsonObject["allDetections"][i]))
+
+        return result
+    }
+}
+
+class FaceCaptureConfig {
+    static fromJson(jsonObject) {
+        if (jsonObject == null) return null
+        const result = new FaceCaptureConfig()
+
+        result.copyright = jsonObject["copyright"]
+        result.cameraSwitchEnabled = jsonObject["cameraSwitchEnabled"]
+        result.closeButtonEnabled = jsonObject["closeButtonEnabled"]
+        result.torchButtonEnabled = jsonObject["torchButtonEnabled"]
+        result.cameraPositionAndroid = jsonObject["cameraPositionAndroid"]
+        result.cameraPositionIOS = jsonObject["cameraPositionIOS"]
+        result.screenOrientation = []
+        if (jsonObject["screenOrientation"] != null)
+            for (const i in jsonObject["screenOrientation"])
+                result.screenOrientation.push(jsonObject["screenOrientation"][i])
+        result.timeout = jsonObject["timeout"]
+        result.holdStillDuration = jsonObject["holdStillDuration"]
+
+        return result
+    }
+}
+
 class FaceCaptureException {
     static fromJson(jsonObject) {
         if (jsonObject == null) return null
         const result = new FaceCaptureException()
 
-        result.errorCode = jsonObject["errorCode"]
+        result.code = jsonObject["code"]
         result.message = jsonObject["message"]
 
         return result
     }
 }
 
-class InitException {
+class FaceCaptureImage {
     static fromJson(jsonObject) {
         if (jsonObject == null) return null
-        const result = new InitException()
+        const result = new FaceCaptureImage()
 
-        result.errorCode = jsonObject["errorCode"]
-        result.underlyingException = LicenseException.fromJson(jsonObject["underlyingException"])
-        result.message = jsonObject["message"]
-
-        return result
-    }
-}
-
-class LicenseException {
-    static fromJson(jsonObject) {
-        if (jsonObject == null) return null
-        const result = new LicenseException()
-
-        result.errorCode = jsonObject["errorCode"]
-        result.message = jsonObject["message"]
-
-        return result
-    }
-}
-
-class LivenessErrorException {
-    static fromJson(jsonObject) {
-        if (jsonObject == null) return null
-        const result = new LivenessErrorException()
-
-        result.errorCode = jsonObject["errorCode"]
-        result.underlyingException = LivenessBackendException.fromJson(jsonObject["underlyingException"])
-        result.message = jsonObject["message"]
-
-        return result
-    }
-}
-
-class LivenessBackendException {
-    static fromJson(jsonObject) {
-        if (jsonObject == null) return null
-        const result = new LivenessBackendException()
-
-        result.errorCode = jsonObject["errorCode"]
-        result.message = jsonObject["message"]
-
-        return result
-    }
-}
-
-class MatchFacesException {
-    static fromJson(jsonObject) {
-        if (jsonObject == null) return null
-        const result = new MatchFacesException()
-
-        result.errorCode = jsonObject["errorCode"]
-        result.message = jsonObject["message"]
-        result.detailedErrorMessage = jsonObject["detailedErrorMessage"]
-
-        return result
-    }
-}
-
-class DetectFacesErrorException {
-    static fromJson(jsonObject) {
-        if (jsonObject == null) return null
-        const result = new DetectFacesErrorException()
-
-        result.errorCode = jsonObject["errorCode"]
-        result.underlyingException = DetectFacesBackendException.fromJson(jsonObject["underlyingException"])
-        result.message = jsonObject["message"]
-
-        return result
-    }
-}
-
-class DetectFacesBackendException {
-    static fromJson(jsonObject) {
-        if (jsonObject == null) return null
-        const result = new DetectFacesBackendException()
-
-        result.errorCode = jsonObject["errorCode"]
-        result.message = jsonObject["message"]
+        result.imageType = jsonObject["imageType"]
+        result.image = jsonObject["image"]
+        result.tag = jsonObject["tag"]
 
         return result
     }
@@ -106,154 +196,34 @@ class FaceCaptureResponse {
         if (jsonObject == null) return null
         const result = new FaceCaptureResponse()
 
-        result.exception = FaceCaptureException.fromJson(jsonObject["exception"])
-        result.image = Image.fromJson(jsonObject["image"])
+        result.error = FaceCaptureException.fromJson(jsonObject["error"])
+        result.image = FaceCaptureImage.fromJson(jsonObject["image"])
 
         return result
     }
 }
 
-class LivenessResponse {
+class OutputImageCrop {
     static fromJson(jsonObject) {
         if (jsonObject == null) return null
-        const result = new LivenessResponse()
+        const result = new OutputImageCrop()
 
-        result.bitmap = jsonObject["bitmap"]
-        result.liveness = jsonObject["liveness"]
-        result.tag = jsonObject["tag"]
-        result.transactionId = jsonObject["transactionId"]
-        result.estimatedAge = jsonObject["estimatedAge"]
-        result.exception = LivenessErrorException.fromJson(jsonObject["exception"])
+        result.type = jsonObject["type"]
+        result.size = Size.fromJson(jsonObject["size"])
+        result.padColor = jsonObject["padColor"]
+        result.returnOriginalRect = jsonObject["returnOriginalRect"]
 
         return result
     }
 }
 
-class MatchFacesResponse {
+class OutputImageParams {
     static fromJson(jsonObject) {
         if (jsonObject == null) return null
-        const result = new MatchFacesResponse()
+        const result = new OutputImageParams()
 
-        result.tag = jsonObject["tag"]
-        result.exception = MatchFacesException.fromJson(jsonObject["exception"])
-        result.detections = []
-        if (jsonObject["detections"] != null)
-            for (const i in jsonObject["detections"])
-                result.detections.push(MatchFacesDetection.fromJson(jsonObject["detections"][i]))
-        result.results = []
-        if (jsonObject["results"] != null)
-            for (const i in jsonObject["results"])
-                result.results.push(MatchFacesComparedFacesPair.fromJson(jsonObject["results"][i]))
-
-        return result
-    }
-}
-
-class Image {
-    static fromJson(jsonObject) {
-        if (jsonObject == null) return null
-        const result = new Image()
-
-        result.imageType = jsonObject["imageType"]
-        result.bitmap = jsonObject["bitmap"]
-        result.tag = jsonObject["tag"]
-        result.imageData = jsonObject["imageData"]
-
-        return result
-    }
-}
-
-class MatchFacesRequest {
-    static fromJson(jsonObject) {
-        if (jsonObject == null) return null
-        const result = new MatchFacesRequest()
-
-        result.images = []
-        if (jsonObject["images"] != null)
-            for (const i in jsonObject["images"])
-                result.images.push(MatchFacesImage.fromJson(jsonObject["images"][i]))
-        result.customMetadata = jsonObject["customMetadata"]
-        result.tag = jsonObject["tag"]
-        result.outputImageParams = OutputImageParams.fromJson(jsonObject["outputImageParams"])
-
-        return result
-    }
-}
-
-class MatchFacesImage {
-    static fromJson(jsonObject) {
-        if (jsonObject == null) return null
-        const result = new MatchFacesImage()
-
-        result.imageType = jsonObject["imageType"]
-        result.detectAll = jsonObject["detectAll"]
-        result.bitmap = jsonObject["bitmap"]
-        result.identifier = jsonObject["identifier"]
-
-        return result
-    }
-}
-
-class MatchFacesComparedFacesPair {
-    static fromJson(jsonObject) {
-        if (jsonObject == null) return null
-        const result = new MatchFacesComparedFacesPair()
-
-        result.first = MatchFacesComparedFace.fromJson(jsonObject["first"])
-        result.second = MatchFacesComparedFace.fromJson(jsonObject["second"])
-        result.similarity = jsonObject["similarity"]
-        result.score = jsonObject["score"]
-        result.exception = MatchFacesException.fromJson(jsonObject["exception"])
-
-        return result
-    }
-}
-
-class MatchFacesComparedFace {
-    static fromJson(jsonObject) {
-        if (jsonObject == null) return null
-        const result = new MatchFacesComparedFace()
-
-        result.face = MatchFacesDetectionFace.fromJson(jsonObject["face"])
-        result.image = MatchFacesImage.fromJson(jsonObject["image"])
-        result.faceIndex = jsonObject["faceIndex"]
-        result.imageIndex = jsonObject["imageIndex"]
-
-        return result
-    }
-}
-
-class MatchFacesDetectionFace {
-    static fromJson(jsonObject) {
-        if (jsonObject == null) return null
-        const result = new MatchFacesDetectionFace()
-
-        result.faceIndex = jsonObject["faceIndex"]
-        result.rotationAngle = jsonObject["rotationAngle"]
-        result.landmarks = []
-        if (jsonObject["landmarks"] != null)
-            for (const i in jsonObject["landmarks"])
-                result.landmarks.push(Point.fromJson(jsonObject["landmarks"][i]))
-        result.faceRect = Rect.fromJson(jsonObject["faceRect"])
-        result.originalRect = Rect.fromJson(jsonObject["originalRect"])
-        result.crop = jsonObject["crop"]
-
-        return result
-    }
-}
-
-class MatchFacesDetection {
-    static fromJson(jsonObject) {
-        if (jsonObject == null) return null
-        const result = new MatchFacesDetection()
-
-        result.image = MatchFacesImage.fromJson(jsonObject["image"])
-        result.imageIndex = jsonObject["imageIndex"]
-        result.faces = []
-        if (jsonObject["faces"] != null)
-            for (const i in jsonObject["faces"])
-                result.faces.push(MatchFacesDetectionFace.fromJson(jsonObject["faces"][i]))
-        result.exception = MatchFacesException.fromJson(jsonObject["exception"])
+        result.backgroundColor = jsonObject["backgroundColor"]
+        result.crop = OutputImageCrop.fromJson(jsonObject["crop"])
 
         return result
     }
@@ -285,79 +255,13 @@ class Rect {
     }
 }
 
-class MatchFacesSimilarityThresholdSplit {
+class Size {
     static fromJson(jsonObject) {
         if (jsonObject == null) return null
-        const result = new MatchFacesSimilarityThresholdSplit()
+        const result = new Size()
 
-        result.matchedFaces = []
-        if (jsonObject["matchedFaces"] != null)
-            for (const i in jsonObject["matchedFaces"])
-                result.matchedFaces.push(MatchFacesComparedFacesPair.fromJson(jsonObject["matchedFaces"][i]))
-        result.unmatchedFaces = []
-        if (jsonObject["unmatchedFaces"] != null)
-            for (const i in jsonObject["unmatchedFaces"])
-                result.unmatchedFaces.push(MatchFacesComparedFacesPair.fromJson(jsonObject["unmatchedFaces"][i]))
-
-        return result
-    }
-}
-
-class DetectFacesRequest {
-    static fromJson(jsonObject) {
-        if (jsonObject == null) return null
-        const result = new DetectFacesRequest()
-
-        result.tag = jsonObject["tag"]
-        result.scenario = jsonObject["scenario"]
-        result.image = jsonObject["image"]
-        result.configuration = DetectFacesConfiguration.fromJson(jsonObject["configuration"])
-
-        return result
-    }
-}
-
-class DetectFacesConfiguration {
-    static fromJson(jsonObject) {
-        if (jsonObject == null) return null
-        const result = new DetectFacesConfiguration()
-
-        result.attributes = []
-        if (jsonObject["attributes"] != null)
-            for (const i in jsonObject["attributes"])
-                result.attributes.push(jsonObject["attributes"][i])
-        result.customQuality = []
-        if (jsonObject["customQuality"] != null)
-            for (const i in jsonObject["customQuality"])
-                result.customQuality.push(ImageQualityCharacteristic.fromJson(jsonObject["customQuality"][i]))
-        result.outputImageParams = OutputImageParams.fromJson(jsonObject["outputImageParams"])
-        result.onlyCentralFace = jsonObject["onlyCentralFace"]
-
-        return result
-    }
-}
-
-class OutputImageParams {
-    static fromJson(jsonObject) {
-        if (jsonObject == null) return null
-        const result = new OutputImageParams()
-
-        result.backgroundColor = jsonObject["backgroundColor"]
-        result.crop = OutputImageCrop.fromJson(jsonObject["crop"])
-
-        return result
-    }
-}
-
-class OutputImageCrop {
-    static fromJson(jsonObject) {
-        if (jsonObject == null) return null
-        const result = new OutputImageCrop()
-
-        result.type = jsonObject["type"]
-        result.size = Size.fromJson(jsonObject["size"])
-        result.padColor = jsonObject["padColor"]
-        result.returnOriginalRect = jsonObject["returnOriginalRect"]
+        result.width = jsonObject["width"]
+        result.height = jsonObject["height"]
 
         return result
     }
@@ -369,7 +273,7 @@ class ImageQualityCharacteristic {
         const result = new ImageQualityCharacteristic()
 
         result.characteristicName = jsonObject["characteristicName"]
-        result.imageQualityGroup = jsonObject["imageQualityGroup"]
+        result.color = jsonObject["color"]
         result.recommendedRange = ImageQualityRange.fromJson(jsonObject["recommendedRange"])
         result.customRange = ImageQualityRange.fromJson(jsonObject["customRange"])
 
@@ -384,61 +288,6 @@ class ImageQualityRange {
 
         result.min = jsonObject["min"]
         result.max = jsonObject["max"]
-
-        return result
-    }
-}
-
-class Size {
-    static fromJson(jsonObject) {
-        if (jsonObject == null) return null
-        const result = new Size()
-
-        result.width = jsonObject["width"]
-        result.height = jsonObject["height"]
-
-        return result
-    }
-}
-
-class DetectFacesResponse {
-    static fromJson(jsonObject) {
-        if (jsonObject == null) return null
-        const result = new DetectFacesResponse()
-
-        result.detection = DetectFaceResult.fromJson(jsonObject["detection"])
-        result.scenario = jsonObject["scenario"]
-        result.error = DetectFacesErrorException.fromJson(jsonObject["error"])
-        result.allDetections = []
-        if (jsonObject["allDetections"] != null)
-            for (const i in jsonObject["allDetections"])
-                result.allDetections.push(DetectFaceResult.fromJson(jsonObject["allDetections"][i]))
-
-        return result
-    }
-}
-
-class DetectFaceResult {
-    static fromJson(jsonObject) {
-        if (jsonObject == null) return null
-        const result = new DetectFaceResult()
-
-        result.quality = []
-        if (jsonObject["quality"] != null)
-            for (const i in jsonObject["quality"])
-                result.quality.push(ImageQualityResult.fromJson(jsonObject["quality"][i]))
-        result.attributes = []
-        if (jsonObject["attributes"] != null)
-            for (const i in jsonObject["attributes"])
-                result.attributes.push(DetectFacesAttributeResult.fromJson(jsonObject["attributes"][i]))
-        result.landmarks = []
-        if (jsonObject["landmarks"] != null)
-            for (const i in jsonObject["landmarks"])
-                result.landmarks.push(Point.fromJson(jsonObject["landmarks"][i]))
-        result.crop = jsonObject["crop"]
-        result.faceRect = Rect.fromJson(jsonObject["faceRect"])
-        result.originalRect = Rect.fromJson(jsonObject["originalRect"])
-        result.isQualityCompliant = jsonObject["isQualityCompliant"]
 
         return result
     }
@@ -459,28 +308,300 @@ class ImageQualityResult {
     }
 }
 
-class DetectFacesAttributeResult {
+class InitConfig {
     static fromJson(jsonObject) {
         if (jsonObject == null) return null
-        const result = new DetectFacesAttributeResult()
+        const result = new InitConfig()
 
-        result.attribute = jsonObject["attribute"]
-        result.value = jsonObject["value"]
-        result.range = ImageQualityRange.fromJson(jsonObject["range"])
-        result.confidence = jsonObject["confidence"]
+        result.license = jsonObject["license"]
+        result.licenseUpdate = jsonObject["licenseUpdate"]
 
         return result
     }
 }
 
-class Font {
+class InitException {
     static fromJson(jsonObject) {
         if (jsonObject == null) return null
-        const result = new Font()
+        const result = new InitException()
 
-        result.name = jsonObject["name"]
-        result.style = jsonObject["style"]
-        result.size = jsonObject["size"]
+        result.code = jsonObject["code"]
+        result.message = jsonObject["message"]
+        result.underlyingError = UnderlyingException.fromJson(jsonObject["underlyingError"])
+
+        return result
+    }
+}
+
+class LivenessConfig {
+    static fromJson(jsonObject) {
+        if (jsonObject == null) return null
+        const result = new LivenessConfig()
+
+        result.copyright = jsonObject["copyright"]
+        result.cameraSwitchEnabled = jsonObject["cameraSwitchEnabled"]
+        result.closeButtonEnabled = jsonObject["closeButtonEnabled"]
+        result.torchButtonEnabled = jsonObject["torchButtonEnabled"]
+        result.cameraPositionAndroid = jsonObject["cameraPositionAndroid"]
+        result.cameraPositionIOS = jsonObject["cameraPositionIOS"]
+        result.screenOrientation = []
+        if (jsonObject["screenOrientation"] != null)
+            for (const i in jsonObject["screenOrientation"])
+                result.screenOrientation.push(jsonObject["screenOrientation"][i])
+        result.locationTrackingEnabled = jsonObject["locationTrackingEnabled"]
+        result.attemptsCount = jsonObject["attemptsCount"]
+        result.recordingProcess = jsonObject["recordingProcess"]
+        result.livenessType = jsonObject["livenessType"]
+        result.tag = jsonObject["tag"]
+        result.skipStep = []
+        if (jsonObject["skipStep"] != null)
+            for (const i in jsonObject["skipStep"])
+                result.skipStep.push(jsonObject["skipStep"][i])
+
+        return result
+    }
+}
+
+class LivenessException {
+    static fromJson(jsonObject) {
+        if (jsonObject == null) return null
+        const result = new LivenessException()
+
+        result.code = jsonObject["code"]
+        result.message = jsonObject["message"]
+        result.underlyingError = UnderlyingException.fromJson(jsonObject["underlyingError"])
+
+        return result
+    }
+}
+
+class LivenessNotification {
+    static fromJson(jsonObject) {
+        if (jsonObject == null) return null
+        const result = new LivenessNotification()
+
+        result.status = jsonObject["status"]
+        result.response = LivenessResponse.fromJson(jsonObject["response"])
+
+        return result
+    }
+}
+
+class LivenessResponse {
+    static fromJson(jsonObject) {
+        if (jsonObject == null) return null
+        const result = new LivenessResponse()
+
+        result.image = jsonObject["image"]
+        result.liveness = jsonObject["liveness"]
+        result.tag = jsonObject["tag"]
+        result.transactionId = jsonObject["transactionId"]
+        result.estimatedAge = jsonObject["estimatedAge"]
+        result.error = LivenessException.fromJson(jsonObject["error"])
+
+        return result
+    }
+}
+
+class ComparedFace {
+    static fromJson(jsonObject) {
+        if (jsonObject == null) return null
+        const result = new ComparedFace()
+
+        result.imageIndex = jsonObject["imageIndex"]
+        result.image = MatchFacesImage.fromJson(jsonObject["image"])
+        result.faceIndex = jsonObject["faceIndex"]
+        result.face = MatchFacesDetectionFace.fromJson(jsonObject["face"])
+
+        return result
+    }
+}
+
+class ComparedFacesPair {
+    static fromJson(jsonObject) {
+        if (jsonObject == null) return null
+        const result = new ComparedFacesPair()
+
+        result.first = ComparedFace.fromJson(jsonObject["first"])
+        result.second = ComparedFace.fromJson(jsonObject["second"])
+        result.similarity = jsonObject["similarity"]
+        result.score = jsonObject["score"]
+        result.error = MatchFacesException.fromJson(jsonObject["error"])
+
+        return result
+    }
+}
+
+class ComparedFacesSplit {
+    static fromJson(jsonObject) {
+        if (jsonObject == null) return null
+        const result = new ComparedFacesSplit()
+
+        result.matchedFaces = []
+        if (jsonObject["matchedFaces"] != null)
+            for (const i in jsonObject["matchedFaces"])
+                result.matchedFaces.push(ComparedFacesPair.fromJson(jsonObject["matchedFaces"][i]))
+        result.unmatchedFaces = []
+        if (jsonObject["unmatchedFaces"] != null)
+            for (const i in jsonObject["unmatchedFaces"])
+                result.unmatchedFaces.push(ComparedFacesPair.fromJson(jsonObject["unmatchedFaces"][i]))
+
+        return result
+    }
+}
+
+class MatchFacesConfig {
+    static fromJson(jsonObject) {
+        if (jsonObject == null) return null
+        const result = new MatchFacesConfig()
+
+        result.processingMode = jsonObject["processingMode"]
+
+        return result
+    }
+}
+
+class MatchFacesDetection {
+    static fromJson(jsonObject) {
+        if (jsonObject == null) return null
+        const result = new MatchFacesDetection()
+
+        result.imageIndex = jsonObject["imageIndex"]
+        result.image = MatchFacesImage.fromJson(jsonObject["image"])
+        result.faces = []
+        if (jsonObject["faces"] != null)
+            for (const i in jsonObject["faces"])
+                result.faces.push(MatchFacesDetectionFace.fromJson(jsonObject["faces"][i]))
+        result.error = MatchFacesException.fromJson(jsonObject["error"])
+
+        return result
+    }
+}
+
+class MatchFacesDetectionFace {
+    static fromJson(jsonObject) {
+        if (jsonObject == null) return null
+        const result = new MatchFacesDetectionFace()
+
+        result.faceIndex = jsonObject["faceIndex"]
+        result.landmarks = []
+        if (jsonObject["landmarks"] != null)
+            for (const i in jsonObject["landmarks"])
+                result.landmarks.push(Point.fromJson(jsonObject["landmarks"][i]))
+        result.faceRect = Rect.fromJson(jsonObject["faceRect"])
+        result.rotationAngle = jsonObject["rotationAngle"]
+        result.originalRect = Rect.fromJson(jsonObject["originalRect"])
+        result.crop = jsonObject["crop"]
+
+        return result
+    }
+}
+
+class MatchFacesException {
+    static fromJson(jsonObject) {
+        if (jsonObject == null) return null
+        const result = new MatchFacesException()
+
+        result.code = jsonObject["code"]
+        result.message = jsonObject["message"]
+        result.underlyingError = UnderlyingException.fromJson(jsonObject["underlyingError"])
+
+        return result
+    }
+}
+
+class MatchFacesImage {
+    static fromJson(jsonObject) {
+        if (jsonObject == null) return null
+        const result = new MatchFacesImage()
+
+        result.image = jsonObject["image"]
+        result.imageType = jsonObject["imageType"]
+        result.detectAll = jsonObject["detectAll"]
+        result.identifier = jsonObject["identifier"]
+
+        return result
+    }
+}
+
+class MatchFacesRequest {
+    static fromJson(jsonObject) {
+        if (jsonObject == null) return null
+        const result = new MatchFacesRequest()
+
+        result.images = []
+        if (jsonObject["images"] != null)
+            for (const i in jsonObject["images"])
+                result.images.push(MatchFacesImage.fromJson(jsonObject["images"][i]))
+        result.outputImageParams = OutputImageParams.fromJson(jsonObject["outputImageParams"])
+        result.tag = jsonObject["tag"]
+        result.metadata = jsonObject["metadata"]
+
+        return result
+    }
+}
+
+class MatchFacesResponse {
+    static fromJson(jsonObject) {
+        if (jsonObject == null) return null
+        const result = new MatchFacesResponse()
+
+        result.results = []
+        if (jsonObject["results"] != null)
+            for (const i in jsonObject["results"])
+                result.results.push(ComparedFacesPair.fromJson(jsonObject["results"][i]))
+        result.detections = []
+        if (jsonObject["detections"] != null)
+            for (const i in jsonObject["detections"])
+                result.detections.push(MatchFacesDetection.fromJson(jsonObject["detections"][i]))
+        result.tag = jsonObject["tag"]
+        result.error = MatchFacesException.fromJson(jsonObject["error"])
+
+        return result
+    }
+}
+
+class EditGroupPersonsRequest {
+    static fromJson(jsonObject) {
+        if (jsonObject == null) return null
+        const result = new EditGroupPersonsRequest()
+
+        result.personIdsToAdd = []
+        if (jsonObject["personIdsToAdd"] != null)
+            for (const i in jsonObject["personIdsToAdd"])
+                result.personIdsToAdd.push(jsonObject["personIdsToAdd"][i])
+        result.personIdsToRemove = []
+        if (jsonObject["personIdsToRemove"] != null)
+            for (const i in jsonObject["personIdsToRemove"])
+                result.personIdsToRemove.push(jsonObject["personIdsToRemove"][i])
+
+        return result
+    }
+}
+
+class ImageUpload {
+    static fromJson(jsonObject) {
+        if (jsonObject == null) return null
+        const result = new ImageUpload()
+
+        result.imageData = jsonObject["imageData"]
+        result.imageUrl = jsonObject["imageUrl"]
+
+        return result
+    }
+}
+
+class PageableItemList {
+    static fromJson(jsonObject) {
+        if (jsonObject == null) return null
+        const result = new PageableItemList()
+
+        result.items = []
+        if (jsonObject["items"] != null)
+            for (const i in jsonObject["items"])
+                result.items.push(jsonObject["items"][i])
+        result.page = jsonObject["page"]
+        result.totalPages = jsonObject["totalPages"]
 
         return result
     }
@@ -492,11 +613,11 @@ class Person {
         const result = new Person()
 
         result.name = jsonObject["name"]
+        result.updatedAt = jsonObject["updatedAt"]
         result.groups = []
         if (jsonObject["groups"] != null)
             for (const i in jsonObject["groups"])
                 result.groups.push(jsonObject["groups"][i])
-        result.updatedAt = jsonObject["updatedAt"]
         result.id = jsonObject["id"]
         result.metadata = jsonObject["metadata"]
         result.createdAt = jsonObject["createdAt"]
@@ -535,74 +656,42 @@ class PersonImage {
     }
 }
 
-class ImageUpload {
-    static fromJson(jsonObject) {
-        if (jsonObject == null) return null
-        const result = new ImageUpload()
-
-        result.imageData = jsonObject["imageData"]
-        result.imageUrl = jsonObject["imageUrl"]
-
-        return result
-    }
-}
-
-class EditGroupPersonsRequest {
-    static fromJson(jsonObject) {
-        if (jsonObject == null) return null
-        const result = new EditGroupPersonsRequest()
-
-        result.personIdsToAdd = []
-        if (jsonObject["personIdsToAdd"] != null)
-            for (const i in jsonObject["personIdsToAdd"])
-                result.personIdsToAdd.push(jsonObject["personIdsToAdd"][i])
-        result.personIdsToRemove = []
-        if (jsonObject["personIdsToRemove"] != null)
-            for (const i in jsonObject["personIdsToRemove"])
-                result.personIdsToRemove.push(jsonObject["personIdsToRemove"][i])
-
-        return result
-    }
-}
-
-class SearchPersonRequest {
-    static fromJson(jsonObject) {
-        if (jsonObject == null) return null
-        const result = new SearchPersonRequest()
-
-        result.outputImageParams = OutputImageParams.fromJson(jsonObject["outputImageParams"])
-        result.groupIdsForSearch = []
-        if (jsonObject["groupIdsForSearch"] != null)
-            for (const i in jsonObject["groupIdsForSearch"])
-                result.groupIdsForSearch.push(jsonObject["groupIdsForSearch"][i])
-        result.threshold = jsonObject["threshold"]
-        result.limit = jsonObject["limit"]
-        result.imageUpload = ImageUpload.fromJson(jsonObject["imageUpload"])
-        result.detectAll = jsonObject["detectAll"]
-
-        return result
-    }
-}
-
 class SearchPerson {
     static fromJson(jsonObject) {
         if (jsonObject == null) return null
         const result = new SearchPerson()
 
-        result.detection = SearchPersonDetection.fromJson(jsonObject["detection"])
         result.images = []
         if (jsonObject["images"] != null)
             for (const i in jsonObject["images"])
                 result.images.push(SearchPersonImage.fromJson(jsonObject["images"][i]))
+        result.detection = SearchPersonDetection.fromJson(jsonObject["detection"])
         result.name = jsonObject["name"]
+        result.updatedAt = jsonObject["updatedAt"]
         result.groups = []
         if (jsonObject["groups"] != null)
             for (const i in jsonObject["groups"])
                 result.groups.push(jsonObject["groups"][i])
-        result.updatedAt = jsonObject["updatedAt"]
         result.id = jsonObject["id"]
         result.metadata = jsonObject["metadata"]
         result.createdAt = jsonObject["createdAt"]
+
+        return result
+    }
+}
+
+class SearchPersonDetection {
+    static fromJson(jsonObject) {
+        if (jsonObject == null) return null
+        const result = new SearchPersonDetection()
+
+        result.landmarks = []
+        if (jsonObject["landmarks"] != null)
+            for (const i in jsonObject["landmarks"])
+                result.landmarks.push(Point.fromJson(jsonObject["landmarks"][i]))
+        result.rect = Rect.fromJson(jsonObject["rect"])
+        result.crop = jsonObject["crop"]
+        result.rotationAngle = jsonObject["rotationAngle"]
 
         return result
     }
@@ -626,30 +715,32 @@ class SearchPersonImage {
     }
 }
 
-class SearchPersonDetection {
+class SearchPersonRequest {
     static fromJson(jsonObject) {
         if (jsonObject == null) return null
-        const result = new SearchPersonDetection()
+        const result = new SearchPersonRequest()
 
-        result.landmarks = []
-        if (jsonObject["landmarks"] != null)
-            for (const i in jsonObject["landmarks"])
-                result.landmarks.push(Point.fromJson(jsonObject["landmarks"][i]))
-        result.rect = Rect.fromJson(jsonObject["rect"])
-        result.cropImage = jsonObject["cropImage"]
-        result.rotationAngle = jsonObject["rotationAngle"]
+        result.imageUpload = ImageUpload.fromJson(jsonObject["imageUpload"])
+        result.groupIdsForSearch = []
+        if (jsonObject["groupIdsForSearch"] != null)
+            for (const i in jsonObject["groupIdsForSearch"])
+                result.groupIdsForSearch.push(jsonObject["groupIdsForSearch"][i])
+        result.threshold = jsonObject["threshold"]
+        result.limit = jsonObject["limit"]
+        result.detectAll = jsonObject["detectAll"]
+        result.outputImageParams = OutputImageParams.fromJson(jsonObject["outputImageParams"])
 
         return result
     }
 }
 
-class LivenessNotification {
+class InitResponse {
     static fromJson(jsonObject) {
         if (jsonObject == null) return null
-        const result = new LivenessNotification()
+        const result = new InitResponse()
 
-        result.status = jsonObject["status"]
-        result.response = LivenessResponse.fromJson(jsonObject["response"])
+        result.success = jsonObject["success"]
+        result.error = InitException.fromJson(jsonObject["error"])
 
         return result
     }
@@ -667,25 +758,13 @@ class VideoEncoderCompletion {
     }
 }
 
-class InitializationConfiguration {
+class PersonDBResponse {
     static fromJson(jsonObject) {
         if (jsonObject == null) return null
-        const result = new InitializationConfiguration()
+        const result = new PersonDBResponse()
 
-        result.license = jsonObject["license"]
-        result.licenseUpdate = jsonObject["licenseUpdate"]
-
-        return result
-    }
-}
-
-class InitResponse {
-    static fromJson(jsonObject) {
-        if (jsonObject == null) return null
-        const result = new InitResponse()
-
-        result.success = jsonObject["success"]
-        result.error = InitException.fromJson(jsonObject["error"])
+        result.data = jsonObject["data"]
+        result.error = jsonObject["error"]
 
         return result
     }
@@ -768,6 +847,11 @@ const DetectFacesErrorCode = {
     API_CALL_FAILED: 8,
 }
 
+const CameraPosition = {
+    FRONT: 0,
+    BACK: 1,
+}
+
 const InitErrorCode = {
     IN_PROGRESS_ALREADY: 0,
     MISSING_CORE: 1,
@@ -780,13 +864,8 @@ const InitErrorCode = {
 }
 
 const LivenessStatus = {
-    PASSED: "PASSED",
-    UNKNOWN: "UNKNOWN",
-}
-
-const CameraErrorCode = {
-    CAMERA_NOT_AVAILABLE: "CAMERA_NOT_AVAILABLE",
-    CAMERA_NO_PERMISSION: "CAMERA_NO_PERMISSION",
+    PASSED: 0,
+    UNKNOWN: 1,
 }
 
 const LivenessErrorCode = {
@@ -893,14 +972,8 @@ const ImageQualityCharacteristicName = {
 }
 
 const ScreenOrientation = {
-    PORTRAIT: 1,
-    LANDSCAPE: 2,
-}
-
-const ButtonTag = {
-    CLOSE: 1001,
-    TORCH: 1002,
-    CAMERA_SWITCH: 1003,
+    PORTRAIT: 0,
+    LANDSCAPE: 1,
 }
 
 const CustomizationFont = {
@@ -1057,16 +1130,15 @@ const Enum = {
    ImageQualityGroupName,
    LicensingResultCode,
    DetectFacesErrorCode,
+   CameraPosition,
    InitErrorCode,
    LivenessStatus,
-   CameraErrorCode,
    LivenessErrorCode,
    RecordingProcess,
    DetectFacesBackendErrorCode,
    MatchFacesErrorCode,
    ImageQualityCharacteristicName,
    ScreenOrientation,
-   ButtonTag,
    CustomizationFont,
    DetectFacesScenario,
    LivenessProcessStatus,
@@ -1084,58 +1156,41 @@ const Enum = {
 
 const FaceSDK = {}
 
-FaceSDK.getServiceUrl = (successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["getServiceUrl"])
-FaceSDK.startLiveness = (successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["startLiveness"])
 FaceSDK.getFaceSdkVersion = (successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["getFaceSdkVersion"])
-FaceSDK.presentFaceCaptureActivity = (successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["presentFaceCaptureActivity"])
-FaceSDK.stopFaceCaptureActivity = (successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["stopFaceCaptureActivity"])
-/**
- * @deprecated
- */
-FaceSDK.init = (successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["init"])
-FaceSDK.initialize = (successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["initialize"])
-FaceSDK.initializeWithConfig = (config, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["initializeWithConfig", config])
-/**
- * @deprecated
- */
-FaceSDK.deinit = (successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["deinit"])
-FaceSDK.deinitialize = (successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["deinitialize"])
-FaceSDK.isInitialized = (successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["isInitialized"])
-FaceSDK.stopLivenessProcessing = (successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["stopLivenessProcessing"])
-FaceSDK.setRequestHeaders = (headers, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["setRequestHeaders", headers])
-FaceSDK.presentFaceCaptureActivityWithConfig = (config, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["presentFaceCaptureActivityWithConfig", config])
-FaceSDK.matchFacesWithConfig = (request, config, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["matchFacesWithConfig", request, config])
-FaceSDK.startLivenessWithConfig = (config, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["startLivenessWithConfig", config])
+FaceSDK.getServiceUrl = (successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["getServiceUrl"])
 FaceSDK.setServiceUrl = (url, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["setServiceUrl", url])
-FaceSDK.setLogs = (isEnable, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["setLogs", isEnable])
-FaceSDK.setSaveLogs = (isSaveLog, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["setSaveLogs", isSaveLog])
-FaceSDK.setLogsFolder = (path, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["setLogsFolder", path])
-FaceSDK.matchFaces = (request, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["matchFaces", request])
-FaceSDK.detectFaces = (request, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["detectFaces", request])
-FaceSDK.setUiCustomizationLayer = (json, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["setUiCustomizationLayer", json])
-FaceSDK.setUiConfiguration = (config, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["setUiConfiguration", config])
 FaceSDK.setLocalizationDictionary = (dictionary, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["setLocalizationDictionary", dictionary])
-FaceSDK.matchFacesSimilarityThresholdSplit = (faces, similarity, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["matchFacesSimilarityThresholdSplit", faces, similarity])
-FaceSDK.getPerson = (personId, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["getPerson", personId])
+FaceSDK.setRequestHeaders = (headers, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["setRequestHeaders", headers])
+FaceSDK.setCustomization = (config, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["setCustomization", config])
+FaceSDK.initialize = (config, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["initialize", config])
+FaceSDK.deinitialize = (successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["deinitialize"])
+FaceSDK.startFaceCapture = (config, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["startFaceCapture", config])
+FaceSDK.stopFaceCapture = (successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["stopFaceCapture"])
+FaceSDK.startLiveness = (config, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["startLiveness", config])
+FaceSDK.stopLiveness = (successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["stopLiveness"])
+FaceSDK.matchFaces = (request, config, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["matchFaces", request, config])
+FaceSDK.splitComparedFaces = (faces, similarity, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["splitComparedFaces", faces, similarity])
+FaceSDK.detectFaces = (request, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["detectFaces", request])
 FaceSDK.createPerson = (name, groupIds, metadata, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["createPerson", name, groupIds, metadata])
 FaceSDK.updatePerson = (person, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["updatePerson", person])
 FaceSDK.deletePerson = (personId, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["deletePerson", personId])
+FaceSDK.getPerson = (personId, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["getPerson", personId])
+FaceSDK.addPersonImage = (personId, image, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["addPersonImage", personId, image])
+FaceSDK.deletePersonImage = (personId, imageId, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["deletePersonImage", personId, imageId])
+FaceSDK.getPersonImage = (personId, imageId, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["getPersonImage", personId, imageId])
 FaceSDK.getPersonImages = (personId, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["getPersonImages", personId])
 FaceSDK.getPersonImagesForPage = (personId, page, size, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["getPersonImagesForPage", personId, page, size])
-FaceSDK.addPersonImage = (personId, image, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["addPersonImage", personId, image])
-FaceSDK.getPersonImage = (personId, imageId, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["getPersonImage", personId, imageId])
-FaceSDK.deletePersonImage = (personId, imageId, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["deletePersonImage", personId, imageId])
+FaceSDK.createGroup = (name, metadata, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["createGroup", name, metadata])
+FaceSDK.updateGroup = (group, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["updateGroup", group])
+FaceSDK.editPersonsInGroup = (groupId, editGroupPersonsRequest, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["editPersonsInGroup", groupId, editGroupPersonsRequest])
+FaceSDK.deleteGroup = (groupId, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["deleteGroup", groupId])
+FaceSDK.getGroup = (groupId, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["getGroup", groupId])
 FaceSDK.getGroups = (successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["getGroups"])
 FaceSDK.getGroupsForPage = (page, size, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["getGroupsForPage", page, size])
 FaceSDK.getPersonGroups = (personId, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["getPersonGroups", personId])
 FaceSDK.getPersonGroupsForPage = (personId, page, size, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["getPersonGroupsForPage", personId, page, size])
-FaceSDK.createGroup = (name, metadata, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["createGroup", name, metadata])
-FaceSDK.getGroup = (groupId, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["getGroup", groupId])
-FaceSDK.updateGroup = (group, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["updateGroup", group])
-FaceSDK.editPersonsInGroup = (groupId, editGroupPersonsRequest, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["editPersonsInGroup", groupId, editGroupPersonsRequest])
 FaceSDK.getPersonsInGroup = (groupId, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["getPersonsInGroup", groupId])
 FaceSDK.getPersonsInGroupForPage = (groupId, page, size, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["getPersonsInGroupForPage", groupId, page, size])
-FaceSDK.deleteGroup = (groupId, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["deleteGroup", groupId])
 FaceSDK.searchPerson = (searchPersonRequest, successCallback, errorCallback) => cordova.exec(successCallback, errorCallback, "FaceApi", "exec", ["searchPerson", searchPersonRequest])
 
 FaceSDKPlugin = {}
@@ -1143,51 +1198,55 @@ FaceSDKPlugin = {}
 FaceSDKPlugin.FaceSDK = FaceSDK
 FaceSDKPlugin.Enum = Enum
 
+FaceSDKPlugin.Customization = Customization
+FaceSDKPlugin.Font = Font
+FaceSDKPlugin.DetectFaceResult = DetectFaceResult
+FaceSDKPlugin.DetectFacesAttributeResult = DetectFacesAttributeResult
+FaceSDKPlugin.DetectFacesConfig = DetectFacesConfig
+FaceSDKPlugin.UnderlyingException = UnderlyingException
+FaceSDKPlugin.DetectFacesException = DetectFacesException
+FaceSDKPlugin.DetectFacesRequest = DetectFacesRequest
+FaceSDKPlugin.DetectFacesResponse = DetectFacesResponse
+FaceSDKPlugin.FaceCaptureConfig = FaceCaptureConfig
 FaceSDKPlugin.FaceCaptureException = FaceCaptureException
-FaceSDKPlugin.InitException = InitException
-FaceSDKPlugin.LicenseException = LicenseException
-FaceSDKPlugin.LivenessErrorException = LivenessErrorException
-FaceSDKPlugin.LivenessBackendException = LivenessBackendException
-FaceSDKPlugin.MatchFacesException = MatchFacesException
-FaceSDKPlugin.DetectFacesErrorException = DetectFacesErrorException
-FaceSDKPlugin.DetectFacesBackendException = DetectFacesBackendException
+FaceSDKPlugin.FaceCaptureImage = FaceCaptureImage
 FaceSDKPlugin.FaceCaptureResponse = FaceCaptureResponse
-FaceSDKPlugin.LivenessResponse = LivenessResponse
-FaceSDKPlugin.MatchFacesResponse = MatchFacesResponse
-FaceSDKPlugin.Image = Image
-FaceSDKPlugin.MatchFacesRequest = MatchFacesRequest
-FaceSDKPlugin.MatchFacesImage = MatchFacesImage
-FaceSDKPlugin.MatchFacesComparedFacesPair = MatchFacesComparedFacesPair
-FaceSDKPlugin.MatchFacesComparedFace = MatchFacesComparedFace
-FaceSDKPlugin.MatchFacesDetectionFace = MatchFacesDetectionFace
-FaceSDKPlugin.MatchFacesDetection = MatchFacesDetection
+FaceSDKPlugin.OutputImageCrop = OutputImageCrop
+FaceSDKPlugin.OutputImageParams = OutputImageParams
 FaceSDKPlugin.Point = Point
 FaceSDKPlugin.Rect = Rect
-FaceSDKPlugin.MatchFacesSimilarityThresholdSplit = MatchFacesSimilarityThresholdSplit
-FaceSDKPlugin.DetectFacesRequest = DetectFacesRequest
-FaceSDKPlugin.DetectFacesConfiguration = DetectFacesConfiguration
-FaceSDKPlugin.OutputImageParams = OutputImageParams
-FaceSDKPlugin.OutputImageCrop = OutputImageCrop
+FaceSDKPlugin.Size = Size
 FaceSDKPlugin.ImageQualityCharacteristic = ImageQualityCharacteristic
 FaceSDKPlugin.ImageQualityRange = ImageQualityRange
-FaceSDKPlugin.Size = Size
-FaceSDKPlugin.DetectFacesResponse = DetectFacesResponse
-FaceSDKPlugin.DetectFaceResult = DetectFaceResult
 FaceSDKPlugin.ImageQualityResult = ImageQualityResult
-FaceSDKPlugin.DetectFacesAttributeResult = DetectFacesAttributeResult
-FaceSDKPlugin.Font = Font
+FaceSDKPlugin.InitConfig = InitConfig
+FaceSDKPlugin.InitException = InitException
+FaceSDKPlugin.LivenessConfig = LivenessConfig
+FaceSDKPlugin.LivenessException = LivenessException
+FaceSDKPlugin.LivenessNotification = LivenessNotification
+FaceSDKPlugin.LivenessResponse = LivenessResponse
+FaceSDKPlugin.ComparedFace = ComparedFace
+FaceSDKPlugin.ComparedFacesPair = ComparedFacesPair
+FaceSDKPlugin.ComparedFacesSplit = ComparedFacesSplit
+FaceSDKPlugin.MatchFacesConfig = MatchFacesConfig
+FaceSDKPlugin.MatchFacesDetection = MatchFacesDetection
+FaceSDKPlugin.MatchFacesDetectionFace = MatchFacesDetectionFace
+FaceSDKPlugin.MatchFacesException = MatchFacesException
+FaceSDKPlugin.MatchFacesImage = MatchFacesImage
+FaceSDKPlugin.MatchFacesRequest = MatchFacesRequest
+FaceSDKPlugin.MatchFacesResponse = MatchFacesResponse
+FaceSDKPlugin.EditGroupPersonsRequest = EditGroupPersonsRequest
+FaceSDKPlugin.ImageUpload = ImageUpload
+FaceSDKPlugin.PageableItemList = PageableItemList
 FaceSDKPlugin.Person = Person
 FaceSDKPlugin.PersonGroup = PersonGroup
 FaceSDKPlugin.PersonImage = PersonImage
-FaceSDKPlugin.ImageUpload = ImageUpload
-FaceSDKPlugin.EditGroupPersonsRequest = EditGroupPersonsRequest
-FaceSDKPlugin.SearchPersonRequest = SearchPersonRequest
 FaceSDKPlugin.SearchPerson = SearchPerson
-FaceSDKPlugin.SearchPersonImage = SearchPersonImage
 FaceSDKPlugin.SearchPersonDetection = SearchPersonDetection
-FaceSDKPlugin.LivenessNotification = LivenessNotification
-FaceSDKPlugin.VideoEncoderCompletion = VideoEncoderCompletion
-FaceSDKPlugin.InitializationConfiguration = InitializationConfiguration
+FaceSDKPlugin.SearchPersonImage = SearchPersonImage
+FaceSDKPlugin.SearchPersonRequest = SearchPersonRequest
 FaceSDKPlugin.InitResponse = InitResponse
+FaceSDKPlugin.VideoEncoderCompletion = VideoEncoderCompletion
+FaceSDKPlugin.PersonDBResponse = PersonDBResponse
 
 module.exports = FaceSDKPlugin
