@@ -16,6 +16,7 @@ var app = {
         var ComparedFacesSplit = FaceSDKPlugin.ComparedFacesSplit
         var InitConfig = FaceSDKPlugin.InitConfig
         var InitResponse = FaceSDKPlugin.InitResponse
+        var LivenessNotification = FaceSDKPlugin.LivenessNotification
         var Enum = FaceSDKPlugin.Enum
 
         var image1 = new MatchFacesImage()
@@ -35,9 +36,9 @@ var app = {
             if (!response.success) {
                 console.log(response.error.code);
                 console.log(response.error.message);
-              } else {
+            } else {
                 console.log("Init complete")
-              }
+            }
         }
 
         path = cordova.file.applicationDirectory + "www/regula.license"
@@ -59,8 +60,17 @@ var app = {
         function pickImage(first) {
             navigator.notification.confirm("Choose the option", button => {
                 if (button == 1)
-                    FaceSDK.startFaceCapture(null, result => {
-                        setImage(first, FaceCaptureResponse.fromJson(JSON.parse(result)).image.image, Enum.ImageType.LIVE)
+                    FaceSDK.startFaceCapture(null, raw => {
+                        // handling event
+                        var csEventId = "cameraSwitchEvent"
+                        if (raw.substring(0, csEventId.length) === csEventId) {
+                            raw = raw.substring(csEventId.length, raw.length)
+                            var cameraId = raw
+                            console.log("switched to camera " + cameraId)
+                        } else {
+                            // handling response
+                            setImage(first, FaceCaptureResponse.fromJson(JSON.parse(raw)).image.image, Enum.ImageType.LIVE)
+                        }
                     }, e => { })
                 else
                     navigator.camera.getPicture(function (result) {
@@ -114,12 +124,25 @@ var app = {
         }
 
         function liveness() {
-            FaceSDK.startLiveness({ skipStep: [Enum.LivenessSkipStep.ONBOARDING_STEP] }, result => {
-                result = LivenessResponse.fromJson(JSON.parse(result))
-
-                setImage(true, result.image, Enum.ImageType.LIVE)
-                if (result.image != null)
-                    document.getElementById("livenessResult").innerHTML = result["liveness"] == Enum.LivenessStatus.PASSED ? "passed" : "unknown"
+            FaceSDK.startLiveness({ skipStep: [Enum.LivenessSkipStep.ONBOARDING_STEP] }, raw => {
+                // handling events
+                var lnEventId = "livenessNotificationEvent"
+                var csEventId = "cameraSwitchEvent"
+                if (raw.substring(0, lnEventId.length) === lnEventId) {
+                    raw = raw.substring(lnEventId.length, raw.length)
+                    var notification = LivenessNotification.fromJson(JSON.parse(raw))
+                    console.log("LivenessStatus: " + notification.status)
+                } else if (raw.substring(0, csEventId.length) === csEventId) {
+                    raw = raw.substring(csEventId.length, raw.length)
+                    var cameraId = raw
+                    console.log("switched to camera " + cameraId)
+                } else {
+                    // handling response
+                    var result = LivenessResponse.fromJson(JSON.parse(raw))
+                    setImage(true, result.image, Enum.ImageType.LIVE)
+                    if (result.image != null)
+                        document.getElementById("livenessResult").innerHTML = result.liveness == Enum.LivenessStatus.PASSED ? "passed" : "unknown"
+                }
             }, e => { })
         }
     },
