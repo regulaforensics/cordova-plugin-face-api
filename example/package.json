@@ -13,8 +13,8 @@
   "author": "Regula Forensics Inc.",
   "license": "commercial",
   "dependencies": {
-    "@regulaforensics/cordova-plugin-face-api": "6.2.325-nightly",
-    "@regulaforensics/cordova-plugin-face-core-basic": "6.2.87-nightly",
+    "@regulaforensics/cordova-plugin-face-api": "6.2.326-nightly",
+    "@regulaforensics/cordova-plugin-face-core-basic": "6.2.88-nightly",
     "cordova-android": "12.0.1",
     "cordova-ios": "7.0.1",
     "cordova-plugin-add-swift-support": "2.0.2",
