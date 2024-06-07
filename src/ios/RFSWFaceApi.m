@@ -7,7 +7,7 @@ static CDVInvokedUrlCommand* _command;
 + (CDVInvokedUrlCommand*)command { return _command; }
 + (void) setCommand:(CDVInvokedUrlCommand*)command { _command = command; }
 
-RFSWEventSender sendEvent = ^(NSString* event, id data) {
+static RFSWEventSender sendEvent = ^(NSString* event, id data) {
     data = [RFSWJSONConstructor toSendable:data];
     if (event) {
         NSArray *skippedEvents = @[RFSWVideoEncoderCompletionEvent, RFSWOnCustomButtonTappedEvent];
