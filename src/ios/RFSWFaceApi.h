@@ -5,7 +5,7 @@
 @import FaceSDK;
 
 typedef void (^RFSWCallback)(id _Nullable response);
-typedef void (^RFSWEventSender)(NSString* _Nonnull event, id _Nullable data);
+typedef void (^RFSWEventSender)(NSString* _Nullable event, id _Nullable data);
 
 @interface RFSWFaceApi : CDVPlugin<RFSURLRequestInterceptingDelegate,
                                     RFSVideoUploadingDelegate,

@@ -7,13 +7,14 @@ static CDVInvokedUrlCommand* _command;
 + (CDVInvokedUrlCommand*)command { return _command; }
 + (void) setCommand:(CDVInvokedUrlCommand*)command { _command = command; }
 
-RFSWEventSender sendEvent = ^(NSString* _Nonnull event, id _Nullable data) {
-    NSArray *skippedEvents = @[RFSWVideoEncoderCompletionEvent, RFSWOnCustomButtonTappedEvent];
-    if([skippedEvents containsObject:event]) return;
-
+static RFSWEventSender sendEvent = ^(NSString* event, id data) {
     data = [RFSWJSONConstructor toSendable:data];
-    NSArray *singleEvents = @[];
-    if(![singleEvents containsObject:event]) data = [NSString stringWithFormat:@"%@%@", event, data];
+    if (event) {
+        NSArray *skippedEvents = @[RFSWVideoEncoderCompletionEvent, RFSWOnCustomButtonTappedEvent];
+        if([skippedEvents containsObject:event]) return;
+        NSArray *singleEvents = @[];
+        if(![singleEvents containsObject:event]) data = [NSString stringWithFormat:@"%@%@", event, data];
+    }
 
     CDVPluginResult* result = [CDVPluginResult resultWithStatus:CDVCommandStatus_OK messageAsString:data];
     [result setKeepCallbackAsBool:YES];
@@ -26,7 +27,7 @@ RFSWEventSender sendEvent = ^(NSString* _Nonnull event, id _Nullable data) {
     NSString* method = command.arguments[0];
     NSMutableArray* args = [NSMutableArray new];
     for(int i = 1; i < command.arguments.count; i++) [args addObject:command.arguments[i]];
-    RFSWCallback callback = ^(id _Nullable data) { sendEvent(@"", data); };
+    RFSWCallback callback = ^(id _Nullable data) { sendEvent(nil, data); };
     NSDictionary* Switch = @{
         @"getVersion": ^{ [self getVersion :callback]; },
         @"getServiceUrl": ^{ [self getServiceUrl :callback]; },
@@ -102,7 +103,7 @@ NSString* RFSWOnCustomButtonTappedEvent = @"onCustomButtonTappedEvent";
 - (NSURLRequest*)interceptorPrepareRequest:(NSURLRequest*)request {
     NSMutableURLRequest *interceptedRequest = [request mutableCopy];
     for (NSString* key in self.headers.allKeys)
-        [interceptedRequest addValue:key forHTTPHeaderField:[self.headers valueForKey:key]];
+        [interceptedRequest addValue:[self.headers valueForKey:key] forHTTPHeaderField:key];
     return interceptedRequest;
 }
 
@@ -302,12 +303,6 @@ NSString* RFSWOnCustomButtonTappedEvent = @"onCustomButtonTappedEvent";
         [RFSFaceSDK.service setLivenessDelegate:self];
         RFSFaceSDK.service.customization.actionDelegate = self;
         callback([RFSWJSONConstructor generateInitCompletion:success :error]);
-    };
-}
-
-- (void (^)(NSNumber*)) cameraSwitchCallback {
-    return ^(NSNumber* cameraId) {
-        sendEvent(RFSWCameraSwitchEvent, cameraId);
     };
 }
 
