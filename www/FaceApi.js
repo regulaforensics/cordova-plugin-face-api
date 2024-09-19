@@ -154,6 +154,7 @@ class FaceCaptureConfig {
         result.closeButtonEnabled = jsonObject["closeButtonEnabled"]
         result.torchButtonEnabled = jsonObject["torchButtonEnabled"]
         result.vibrateOnSteps = jsonObject["vibrateOnSteps"]
+        result.detectOcclusion = jsonObject["detectOcclusion"]
         result.cameraPositionAndroid = jsonObject["cameraPositionAndroid"]
         result.cameraPositionIOS = jsonObject["cameraPositionIOS"]
         result.screenOrientation = []
