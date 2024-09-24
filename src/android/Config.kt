@@ -80,11 +80,13 @@ fun getLivenessConfig(input: LivenessConfiguration) = mapOf(
 fun setMatchFacesConfig(builder: MatchFacesConfiguration.Builder, config: JSONObject) = config.forEach { k, v ->
     when (k) {
         "processingMode" -> builder.setProcessingMode(ProcessingMode.values()[v.toInt()])
+        "locationTrackingEnabled" -> builder.setLocationTrackingEnabled(v as Boolean)
     }
 }
 
 fun getMatchFacesConfig(input: MatchFacesConfiguration) = mapOf(
-    "processingMode" to input.processingMode.ordinal
+    "processingMode" to input.processingMode.ordinal,
+    "locationTrackingEnabled" to input.isLocationTrackingEnabled
 ).toJson()
 
 fun setCustomization(input: Customization, config: JSONObject) = config.forEach { key, value ->
