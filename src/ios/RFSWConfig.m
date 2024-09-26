@@ -89,6 +89,7 @@
             id value = input[key];
             NSDictionary* Switch = @{
                 @"processingMode": ^{ [builder setProcessingMode:[value integerValue]]; },
+                @"locationTrackingEnabled": ^{ [builder setLocationTrackingEnabled:[value boolValue]]; },
             };
             if(Switch[key]) ((void(^)(void))Switch[key])();
         }
@@ -98,6 +99,7 @@
 +(id)generateMatchFacesConfig:(RFSMatchFacesConfiguration*)input {
     return @{
         @"processingMode":@(input.processingMode),
+        @"locationTrackingEnabled":@(input.locationTrackingEnabled),
     };
 }
 

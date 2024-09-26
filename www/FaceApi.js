@@ -473,6 +473,7 @@ class MatchFacesConfig {
         const result = new MatchFacesConfig()
 
         result.processingMode = jsonObject["processingMode"]
+        result.locationTrackingEnabled = jsonObject["locationTrackingEnabled"]
 
         return result
     }
