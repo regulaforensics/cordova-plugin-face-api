@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<plugin id="cordova-plugin-face-api" version="6.4.524-nightly"
+<plugin id="cordova-plugin-face-api" version="6.4.526-nightly"
   xmlns="http://apache.org/cordova/ns/plugins/1.0">
   <name>FaceApi</name>
   <description>Cordova plugin Face Api</description>
@@ -15,7 +15,7 @@
       <feature name="FaceApi">
         <param name="ios-package" value="RFSWFaceApi" />
       </feature>
-      <preference name="deployment-target" value="12.0" />
+      <preference name="deployment-target" value="13.0" />
     </config-file>
     <header-file src="src/ios/RFSWFaceApi.h" />
     <source-file src="src/ios/RFSWFaceApi.m" />
@@ -28,7 +28,7 @@
             <source url="https://github.com/CocoaPods/Specs.git"/>
         </config>
       <pods>
-        <pod name="FaceSDKNightly" spec="6.4.2454" />
+        <pod name="FaceSDKNightly" spec="6.4.2460" />
       </pods>
     </podspec>
   </platform>
