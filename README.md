@@ -1,7 +1,12 @@
-# Regula Face API (Cordova version)
+# Deprecated
+This plugin is deprecated and `7.1` is the last release. We kindly recommend migrating to our new plugin `@regulaforensics/face-sdk`:
+* [github](https://github.com/regulaforensics/npm-face-sdk)
+* [npmjs](https://www.npmjs.com/package/@regulaforensics/face-sdk)
+
+## Regula Face API (Cordova version)
 Face API is a framework that is used for face matching, recognition and liveness detection.
 
-# Contents
+## Contents
 * [How to build the demo application](#how-to-build-the-demo-application)
 * [How to use offine match](#how-to-use-offine-match)
 * [Documentation](#documentation)
@@ -23,7 +28,7 @@ $ cordova prepare
 4. iOS:
   * Run `cordova run ios` inside example folder - this is just one way to run the app. You can also run it directly from within Xcode.
 
-## How to use offine match
+## How to use offline match
 1. Place a license that supports offline match at `www/regula.license`.
 2. Change `android-packageName` and `ios-CFBundleIdentifier` in `config.xml` if required by your license.
 3. Run the following commands:
