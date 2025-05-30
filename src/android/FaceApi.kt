@@ -214,7 +214,7 @@ fun detectFaces(callback: Callback, request: JSONObject) = Instance().detectFace
     detectFacesCompletion(callback)
 )
 
-val db get() = Instance().personDatabase(context)
+val db get() = Instance().personDatabase(context)!!
 
 fun createPerson(
     callback: Callback,
