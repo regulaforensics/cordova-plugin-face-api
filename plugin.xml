@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<plugin id="cordova-plugin-face-api" version="7.1.602-rc"
+<plugin id="cordova-plugin-face-api" version="7.1.603-rc"
   xmlns="http://apache.org/cordova/ns/plugins/1.0">
   <name>FaceApi</name>
   <description>Cordova plugin Face Api</description>
@@ -28,7 +28,7 @@
             <source url="https://github.com/CocoaPods/Specs.git"/>
         </config>
       <pods>
-        <pod name="FaceSDKStage" spec="7.1.2704" />
+        <pod name="FaceSDKStage" spec="7.1.2706" />
       </pods>
     </podspec>
   </platform>
