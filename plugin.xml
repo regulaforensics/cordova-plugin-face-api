@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<plugin id="cordova-plugin-face-api" version="7.1.633-nightly"
+<plugin id="cordova-plugin-face-api" version="7.1.634-nightly"
   xmlns="http://apache.org/cordova/ns/plugins/1.0">
   <name>FaceApi</name>
   <description>Cordova plugin Face Api</description>
@@ -28,7 +28,7 @@
             <source url="https://github.com/CocoaPods/Specs.git"/>
         </config>
       <pods>
-        <pod name="FaceSDKNightly" spec="7.1.2813" />
+        <pod name="FaceSDKNightly" spec="7.1.2815" />
       </pods>
     </podspec>
   </platform>
