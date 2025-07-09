@@ -1,6 +1,6 @@
 {
   "name": "@regulaforensics/cordova-plugin-face-api",
-  "version": "7.1.625",
+  "version": "7.1.638",
   "description": "Cordova plugin for compairing faces using phone`s camera",
   "cordova": {
     "id": "@regulaforensics/cordova-plugin-face-api",
