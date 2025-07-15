@@ -13,7 +13,7 @@
   "author": "Regula Forensics Inc.",
   "license": "commercial",
   "dependencies": {
-    "@regulaforensics/cordova-plugin-face-api": "7.2.643-rc",
+    "@regulaforensics/cordova-plugin-face-api": "7.1.645-rc",
     "@regulaforensics/cordova-plugin-face-core-basic": "6.3.328-rc",
     "cordova-android": "12.0.1",
     "cordova-ios": "7.0.1",
